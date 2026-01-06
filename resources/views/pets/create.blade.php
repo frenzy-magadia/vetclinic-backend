@@ -12,26 +12,64 @@
 
             <form method="POST" action="{{ route('pets.store') }}" class="space-y-6">
                 @csrf
-<!-- Pet Owner -->
-@if(Auth::user()->role === 'admin' || Auth::user()->role === 'doctor')
-<div>
-    <label for="owner_id" class="block text-sm font-medium text-gray-700">
-        <i class="fas fa-user text-[#d4931d] mr-1"></i>Pet Owner *
-    </label>
-    <select id="owner_id" name="owner_id" required 
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] focus:border-[#0066cc] sm:text-sm @error('owner_id') border-red-500 @enderror">
-        <option value="">Select pet owner</option>
-        @foreach($petOwners as $owner)
-        <option value="{{ $owner->id }}" {{ old('owner_id') == $owner->id ? 'selected' : '' }}>
-            {{ $owner->user->name }} ({{ $owner->user->email }})
-        </option>
-        @endforeach
-    </select>
-    @error('owner_id')
-        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-    @enderror
-</div>
-@endif
+
+                <!-- Pet Owner with Search -->
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'doctor')
+                <div>
+                    <label for="owner_search" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-user text-[#d4931d] mr-1"></i>Pet Owner *
+                    </label>
+                    
+                    <!-- Search Input Container -->
+                    <div class="relative mt-1">
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="owner_search" 
+                                placeholder="Search pet owner by name or email..."
+                                class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0066cc] focus:border-[#0066cc] sm:text-sm"
+                                autocomplete="off"
+                            >
+                            <i class="fas fa-search absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
+                        </div>
+
+                        <!-- Results Dropdown -->
+                        <div id="owner_results" class="hidden absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Hidden Select (stores actual value) -->
+                    <select id="owner_id" name="owner_id" required class="hidden @error('owner_id') border-red-500 @enderror">
+                        <option value="">Select pet owner</option>
+                        @foreach($petOwners as $owner)
+                        <option value="{{ $owner->id }}" 
+                                data-name="{{ strtolower($owner->user->name) }}"
+                                data-email="{{ strtolower($owner->user->email) }}"
+                                {{ old('owner_id') == $owner->id ? 'selected' : '' }}>
+                            {{ $owner->user->name }} ({{ $owner->user->email }})
+                        </option>
+                        @endforeach
+                    </select>
+
+                    <!-- Selected Owner Display -->
+                    <div id="selected_owner" class="hidden mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium text-gray-900 text-sm" id="selected_owner_name"></p>
+                                <p class="text-xs text-gray-600" id="selected_owner_email"></p>
+                            </div>
+                            <button type="button" onclick="clearOwnerSelection()" class="text-red-600 hover:text-red-800 ml-2">
+                                <i class="fas fa-times text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    @error('owner_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                @endif
 
                 <!-- Pet Name -->
                 <div>
@@ -139,7 +177,6 @@
                     </div>
                 </div>
 
-
                 <!-- Medical Notes -->
                 <div>
                     <label for="medical_notes" class="block text-sm font-medium text-gray-700">
@@ -155,9 +192,9 @@
 
                 <!-- Submit Buttons -->
                 <div class="flex justify-end space-x-3">
-                 <a href="{{ route('admin.pets') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-    Cancel
-</a>
+                    <a href="{{ route('admin.pets') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Cancel
+                    </a>
                     <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#0066cc] hover:bg-[#003d82]">
                         <i class="fas fa-save mr-2 text-[#fcd34d]"></i>
                         Add Pet
@@ -167,4 +204,104 @@
         </div>
     </div>
 </div>
+
+<script>
+    const searchInput = document.getElementById('owner_search');
+    const ownerSelect = document.getElementById('owner_id');
+    const resultsDiv = document.getElementById('owner_results');
+    const selectedDiv = document.getElementById('selected_owner');
+    const selectedNameEl = document.getElementById('selected_owner_name');
+    const selectedEmailEl = document.getElementById('selected_owner_email');
+
+    // Show all results when focusing on search
+    searchInput.addEventListener('focus', function() {
+        if (!ownerSelect.value) {
+            performSearch('');
+        }
+    });
+
+    // Search as user types
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        performSearch(query);
+    });
+
+    // Perform search
+    function performSearch(query) {
+        const options = Array.from(ownerSelect.options).slice(1); // Skip first "Select pet owner"
+        let results = options;
+
+        if (query) {
+            results = options.filter(option => {
+                const name = option.dataset.name || '';
+                const email = option.dataset.email || '';
+                return name.includes(query) || email.includes(query);
+            });
+        }
+
+        displayResults(results);
+    }
+
+    // Display search results
+    function displayResults(results) {
+        if (results.length === 0) {
+            resultsDiv.innerHTML = '<div class="px-4 py-3 text-gray-500 text-sm text-center">No pet owners found</div>';
+            resultsDiv.classList.remove('hidden');
+            return;
+        }
+
+        resultsDiv.innerHTML = results.map(option => {
+            const name = option.text.split('(')[0].trim();
+            const email = option.text.match(/\((.*?)\)/)?.[1] || '';
+            return `
+                <div class="px-4 py-2.5 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors" 
+                     onclick="selectOwner('${option.value}', \`${option.text.replace(/`/g, '\\`')}\`)">
+                    <p class="font-medium text-gray-900 text-sm">${name}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">${email}</p>
+                </div>
+            `;
+        }).join('');
+        
+        resultsDiv.classList.remove('hidden');
+    }
+
+    // Select an owner
+    function selectOwner(value, fullText) {
+        ownerSelect.value = value;
+        const name = fullText.split('(')[0].trim();
+        const email = fullText.match(/\((.*?)\)/)?.[1] || '';
+        
+        selectedNameEl.textContent = name;
+        selectedEmailEl.textContent = email;
+        
+        searchInput.value = '';
+        resultsDiv.classList.add('hidden');
+        selectedDiv.classList.remove('hidden');
+        searchInput.parentElement.classList.add('hidden');
+    }
+
+    // Clear selection
+    function clearOwnerSelection() {
+        ownerSelect.value = '';
+        selectedDiv.classList.add('hidden');
+        searchInput.parentElement.classList.remove('hidden');
+        searchInput.value = '';
+        searchInput.focus();
+    }
+
+    // Close results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+            resultsDiv.classList.add('hidden');
+        }
+    });
+
+    // If there's an old value (form validation error), show it
+    @if(old('owner_id'))
+        const selectedOption = ownerSelect.options[ownerSelect.selectedIndex];
+        if (selectedOption.value) {
+            selectOwner(selectedOption.value, selectedOption.text);
+        }
+    @endif
+</script>
 @endsection

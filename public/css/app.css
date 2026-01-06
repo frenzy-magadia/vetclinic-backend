@@ -299,8 +299,8 @@ th {
   color: #6b7280;
 }
 
-/* Custom Palette for PETPRO Veterinary Clinic Co. */
-/* New Color Scheme: Coral & Teal */
+
+
 .bg-dark-sidebar { background-color: #134e4a; }
 .text-dark-sidebar { color: #134e4a; }
 .bg-light-bg { background-color: #f0fdfa; }
@@ -441,7 +441,7 @@ th {
   color: #1f2937 !important;
 }
 
-/* Current page - same size, different color only */
+
 .pagination .current,
 .pagination span[aria-current="page"],
 .pagination .page-item.active .page-link {
@@ -504,7 +504,7 @@ nav[role="navigation"] .pagination > * {
   height: 2.5rem !important;
 }
 
-/* Ensure SVG icons in pagination don't break sizing */
+
 .pagination svg {
   width: 1rem !important;
   height: 1rem !important;

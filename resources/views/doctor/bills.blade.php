@@ -4,15 +4,15 @@
 
 <!-- Page Header -->
 <div class="mb-8">
-    <h1 class="text-3xl font-bold" style="color: #1E3A8A;">Billing</h1>
-    <p class="text-gray-600 mt-2">Manage all billing records and payments</p>
+    <h1 class="text-3xl font-bold" style="color: #2c3e50;">Billing</h1>
+    <p class="mt-2" style="color: #5d6d7e;">Manage all billing records and payments</p>
 </div>
 
 <div class="mb-6">
     <div class="flex justify-between items-center gap-4">
         <div class="flex gap-4 flex-1">
             <!-- Status Filter Dropdown -->
-            <select id="statusFilter" style="appearance: none; -webkit-appearance: none; -moz-appearance: none; background-color: #FDB913; color: #000; font-weight: 600; padding: 8px 40px 8px 16px; border: 1px solid #FDB913; border-radius: 6px; font-size: 14px; cursor: pointer;">
+            <select id="statusFilter" class="px-4 py-2 font-bold rounded-lg cursor-pointer transition text-sm border-0" style="background-color: #f4d03f; color: #2c3e50; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%232c3e50\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 8px center; background-size: 20px; padding-right: 32px;">
                 <option value="">All Status</option>
                 <option value="paid">Paid</option>
                 <option value="partial">Partial</option>
@@ -25,90 +25,87 @@
                     type="text" 
                     id="searchInput" 
                     placeholder="Search pet, owner, service..." 
-                    class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 text-sm"
-                    style="border-color: #D1D5DB; background-color: white;"
+                    class="w-full pl-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    style="border-color: #d1d5db;"
                 >
-                <svg class="absolute right-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
+                <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
         </div>
         
-        <a href="{{ route('doctor.bills.create') }}" class="px-4 py-2 text-white rounded whitespace-nowrap font-medium text-sm transition hover:opacity-90" style="background-color: #1E3A8A;">
-            + Add Bill
+        <a href="{{ route('doctor.bills.create') }}" class="inline-flex items-center px-4 py-2 text-white rounded-lg whitespace-nowrap font-medium text-sm transition hover:opacity-90" style="background-color: #0d5cb6;">
+            <i class="fas fa-plus mr-2"></i>Add Bill
         </a>
     </div>
 </div>
 
 @if(session('success'))
-    <div class="mb-4 px-4 py-3 rounded" style="background-color: #D1FAE5; border: 1px solid #10B981; color: #065F46;">
+    <div class="mb-4 px-4 py-3 rounded" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724;">
         {{ session('success') }}
     </div>
 @endif
 
 @if($bills->count())
-    <div class="bg-white rounded shadow-sm overflow-hidden">
+    <div class="bg-white rounded-lg shadow overflow-hidden">
         <table class="w-full" id="billsTable">
-            <thead style="background-color: #1E3A8A;">
+            <thead style="background-color: #34495e;">
                 <tr>
-                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-white">Pet Name</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-white">Service</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-white">Total Amount</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-white">Balance</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-white">Status</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-white">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #ffffff;">Pet Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #ffffff;">Service</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #ffffff;">Total Amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #ffffff;">Balance</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #ffffff;">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" style="color: #ffffff;">Action</th>
                 </tr>
             </thead>
-            <tbody class="bg-white">
+            <tbody class="bg-white divide-y" style="border-color: #e5e7eb;">
                 @foreach($bills as $bill)
-                <tr class="bill-row border-b hover:bg-gray-50 transition" 
+                <tr class="bill-row hover:bg-gray-50 transition" 
                     data-bill-id="{{ $bill->id }}" 
                     data-pet="{{ strtolower($bill->pet->name) }}" 
                     data-owner="{{ strtolower($bill->pet->owner->user->name) }}" 
-                    data-status="{{ $bill->status }}"
-                    style="border-color: #E5E7EB;">
-                    <td class="px-6 py-4 text-sm font-medium" style="color: #111827;">{{ $bill->pet->name }}</td>
-                    <td class="px-6 py-4 text-sm" style="color: #6B7280;">
+                    data-status="{{ $bill->status }}">
+                    <td class="px-6 py-4 text-sm font-medium" style="color: #2c3e50;">
+                        <i class="fas fa-paw mr-2" style="color: #3498db;"></i>{{ $bill->pet->name }}
+                    </td>
+                    <td class="px-6 py-4 text-sm" style="color: #5d6d7e;">
                         @if($bill->items->count() > 0)
                             {{ $bill->items->first()->description }}
                             @if($bill->items->count() > 1)
-                                <span style="color: #1E3A8A;">+{{ $bill->items->count() - 1 }} more</span>
+                                <span style="color: #0d5cb6;">+{{ $bill->items->count() - 1 }} more</span>
                             @endif
                         @else
                             No items
                         @endif
                     </td>
-                    <td class="px-6 py-4 text-sm font-semibold" style="color: #111827;">₱{{ number_format($bill->total_amount, 2) }}</td>
-                    <td class="px-6 py-4 text-sm font-semibold" style="color: #111827;">₱{{ number_format($bill->balance, 2) }}</td>
+                    <td class="px-6 py-4 text-sm font-semibold" style="color: #2c3e50;">₱{{ number_format($bill->total_amount, 2) }}</td>
+                    <td class="px-6 py-4 text-sm font-semibold" style="color: #2c3e50;">₱{{ number_format($bill->balance, 2) }}</td>
                     <td class="px-6 py-4 text-sm">
                         @if($bill->status == 'paid')
-                            <span class="px-3 py-1 rounded-full text-xs font-medium inline-flex items-center" style="background-color: #D1FAE5; color: #065F46;">
-                                <span class="w-2 h-2 rounded-full mr-2" style="background-color: #059669;"></span>
-                                Paid
+                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap inline-block bg-green-100 text-green-800 border-2 border-green-400">
+                                <i class="fas fa-check-circle mr-1"></i>Paid
                             </span>
                         @elseif($bill->status == 'partial')
-                            <span class="px-3 py-1 rounded-full text-xs font-medium inline-flex items-center" style="background-color: #FEF3C7; color: #92400E;">
-                                <span class="w-2 h-2 rounded-full mr-2" style="background-color: #F59E0B;"></span>
-                                Partial
+                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap inline-block bg-yellow-100 text-yellow-800 border-2 border-yellow-400">
+                                <i class="fas fa-clock mr-1"></i>Partial
                             </span>
                         @else
-                            <span class="px-3 py-1 rounded-full text-xs font-medium inline-flex items-center" style="background-color: #FEE2E2; color: #991B1B;">
-                                <span class="w-2 h-2 rounded-full mr-2" style="background-color: #DC2626;"></span>
-                                Unpaid
+                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap inline-block bg-red-100 text-red-800 border-2 border-red-400">
+                                <i class="fas fa-exclamation-circle mr-1"></i>Unpaid
                             </span>
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <button onclick="viewBill({{ $bill->id }}); return false;" class="px-4 py-2 text-white rounded text-sm font-medium transition hover:opacity-90" style="background-color: #1E3A8A;">
-                            <i class="fas fa-eye mr-1"></i> View
+                        <button onclick="viewBill({{ $bill->id }}); return false;" class="transition inline-block" style="color: #3498db;" title="View Details">
+                            <i class="fas fa-eye text-lg"></i>
                         </button>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        <div id="noResults" class="text-center text-gray-500 py-8" style="display: none;">
-            No bills match your search criteria.
+        <div id="noResults" class="text-center py-8" style="color: #5d6d7e; display: none;">
+            <i class="fas fa-search text-3xl mb-2" style="color: #d1d5db;"></i>
+            <p class="text-sm">No bills match your search criteria.</p>
         </div>
     </div>
 
@@ -116,11 +113,19 @@
         {{ $bills->links() }}
     </div>
 @else
-    <div class="bg-white border rounded p-8 text-center" style="border-color: #E5E7EB;">
-        <p class="text-gray-600 text-sm mb-4">No bills created yet</p>
-        <a href="{{ route('doctor.bills.create') }}" class="px-4 py-2 text-white rounded inline-block text-sm font-medium hover:opacity-90" style="background-color: #1E3A8A;">
-            Create First Bill
-        </a>
+    <div class="bg-white shadow rounded-lg">
+        <div class="p-12 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 rounded-full flex items-center justify-center" style="background-color: #d6eaf8;">
+                    <i class="fas fa-file-invoice-dollar text-3xl" style="color: #3498db;"></i>
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold mb-2" style="color: #2c3e50;">No Bills Found</h3>
+            <p class="mb-6" style="color: #5d6d7e;">Get started by creating your first bill.</p>
+            <a href="{{ route('doctor.bills.create') }}" class="inline-flex items-center gap-2 px-6 py-2 rounded transition text-white" style="background-color: #0d5cb6;">
+                <i class="fas fa-plus"></i>Create First Bill
+            </a>
+        </div>
     </div>
 @endif
 
@@ -128,9 +133,9 @@
 <div id="billModal" style="display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background-color: rgba(0,0,0,0.5);">
     <div style="background-color: white; margin: 3% auto; border-radius: 8px; width: 95%; max-width: 700px; position: relative; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); overflow: hidden;">
         <!-- Modal Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #e5e7eb; background-color: #1E3A8A;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #e5e7eb; background-color: #34495e;">
             <div class="flex items-center gap-2">
-                <i class="fas fa-file-invoice text-white"></i>
+                <i class="fas fa-file-invoice" style="color: #f4d03f;"></i>
                 <h3 class="text-xl font-bold text-white">Bill Details</h3>
             </div>
             <button onclick="closeModal()" class="text-white hover:text-gray-200 text-2xl" style="background: none; border: none; cursor: pointer; padding: 0; line-height: 1;">
@@ -142,18 +147,18 @@
         <div style="padding: 24px; overflow-y: auto; flex: 1;">
             <!-- Pet, Service, and Date Info -->
             <div class="grid grid-cols-3 gap-6 mb-6">
-                <div class="bg-gray-50 p-4 rounded" style="border: 1px solid #E5E7EB;">
-                    <p class="text-xs uppercase font-semibold mb-1" style="color: #6B7280;">Pet Name</p>
-                    <p class="font-bold text-lg" style="color: #1E3A8A;" id="billPetName"></p>
+                <div class="p-4 rounded-lg" style="background-color: #d6eaf8; border: 2px solid #3498db;">
+                    <p class="text-xs uppercase font-semibold mb-1" style="color: #5d6d7e;">Pet Name</p>
+                    <p class="font-bold text-lg" style="color: #2c3e50;" id="billPetName"></p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded" style="border: 1px solid #E5E7EB;">
-                    <p class="text-xs uppercase font-semibold mb-1" style="color: #6B7280;">Service</p>
-                    <p class="font-semibold" style="color: #111827;" id="billService"></p>
+                <div class="p-4 rounded-lg" style="background-color: #f3f4f6; border: 1px solid #d1d5db;">
+                    <p class="text-xs uppercase font-semibold mb-1" style="color: #5d6d7e;">Service</p>
+                    <p class="font-semibold" style="color: #2c3e50;" id="billService"></p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded" style="border: 1px solid #E5E7EB;">
-                    <p class="text-xs uppercase font-semibold mb-1" style="color: #6B7280;">Date</p>
-                    <p class="font-semibold flex items-center" style="color: #111827;">
-                        <i class="fas fa-calendar mr-2" style="color: #1E3A8A;"></i>
+                <div class="p-4 rounded-lg" style="background-color: #f3f4f6; border: 1px solid #d1d5db;">
+                    <p class="text-xs uppercase font-semibold mb-1" style="color: #5d6d7e;">Date</p>
+                    <p class="font-semibold flex items-center" style="color: #2c3e50;">
+                        <i class="fas fa-calendar mr-2" style="color: #3498db;"></i>
                         <span id="billDate"></span>
                     </p>
                 </div>
@@ -164,63 +169,61 @@
                 <!-- Itemizing Section -->
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-3">
-                        <h4 class="font-bold flex items-center" style="color: #111827;">
-                            <i class="fas fa-list mr-2" style="color: #1E3A8A;"></i>
-                            Itemizing
+                        <h4 class="font-bold flex items-center" style="color: #2c3e50;">
+                            <i class="fas fa-list mr-2" style="color: #f4d03f;"></i>Itemizing
                         </h4>
-                        <button onclick="enableEditMode()" class="px-3 py-1.5 text-white rounded text-xs font-medium transition hover:opacity-90" style="background-color: #1E3A8A;">
-                            <i class="fas fa-edit mr-1"></i> Edit Items
+                        <button onclick="enableEditMode()" class="px-3 py-1.5 text-white rounded-lg text-xs font-medium transition hover:opacity-90" style="background-color: #f39c12;">
+                            <i class="fas fa-edit mr-1"></i>Edit Items
                         </button>
                     </div>
-                    <div class="bg-white rounded" style="border: 1px solid #E5E7EB;">
-                        <div id="billItemsList" class="divide-y" style="border-color: #E5E7EB;"></div>
+                    <div class="bg-white rounded-lg" style="border: 1px solid #e5e7eb;">
+                        <div id="billItemsList" class="divide-y" style="border-color: #e5e7eb;"></div>
                     </div>
                 </div>
 
                 <!-- Totals Section -->
-                <div class="bg-gray-50 p-4 rounded mb-6" style="border: 1px solid #E5E7EB;">
-                    <div class="flex justify-between items-center py-2 border-b" style="border-color: #E5E7EB;">
-                        <span class="text-sm font-bold" style="color: #111827;">Total Amount</span>
-                        <span class="text-xl font-bold" style="color: #1E3A8A;" id="billSubtotal"></span>
+                <div class="p-4 rounded-lg mb-6" style="background-color: #f9fafb; border: 2px solid #e5e7eb;">
+                    <div class="flex justify-between items-center py-2 border-b" style="border-color: #e5e7eb;">
+                        <span class="text-sm font-bold" style="color: #2c3e50;">Total Amount</span>
+                        <span class="text-xl font-bold" style="color: #0d5cb6;" id="billSubtotal"></span>
                     </div>
                     <div class="flex justify-between items-center py-3">
-                        <span class="text-sm font-bold" style="color: #111827;">Balance Due</span>
-                        <span class="text-xl font-bold" style="color: #1E3A8A;" id="billBalance"></span>
+                        <span class="text-sm font-bold" style="color: #2c3e50;">Balance Due</span>
+                        <span class="text-xl font-bold" style="color: #e74c3c;" id="billBalance"></span>
                     </div>
                 </div>
 
                 <!-- Update Payment Form -->
-                <div style="border-top: 2px solid #E5E7EB; padding-top: 24px;">
-                    <h4 class="font-bold mb-4 flex items-center" style="color: #111827;">
-                        <i class="fas fa-money-bill-wave mr-2" style="color: #1E3A8A;"></i>
-                        Update Payment
+                <div style="border-top: 2px solid #e5e7eb; padding-top: 24px;">
+                    <h4 class="font-bold mb-4 flex items-center" style="color: #2c3e50;">
+                        <i class="fas fa-money-bill-wave mr-2" style="color: #f4d03f;"></i>Update Payment
                     </h4>
                     <form id="updatePaymentForm" method="POST" class="space-y-4">
                         @csrf
                         @method('PUT')
                         
                         <div>
-                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #6B7280;">Current Balance</label>
-                            <div class="w-full px-4 py-3 border rounded font-bold" style="border-color: #1E3A8A; background-color: #EFF6FF; color: #1E3A8A;">
+                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #5d6d7e;">Current Balance</label>
+                            <div class="w-full px-4 py-3 border-2 rounded-lg font-bold" style="border-color: #0d5cb6; background-color: #d6eaf8; color: #0d5cb6;">
                                 <span id="displayBalance">₱0.00</span>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #6B7280;">Payment Amount</label>
-                            <input type="number" id="paymentAmount" step="0.01" min="0" placeholder="0.00" class="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 font-semibold" style="border-color: #D1D5DB; focus:ring-color: #1E3A8A;">
+                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #5d6d7e;">Payment Amount</label>
+                            <input type="number" id="paymentAmount" step="0.01" min="0" placeholder="0.00" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-blue-500 font-semibold" style="border-color: #d1d5db;">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #6B7280;">New Balance</label>
-                            <div class="w-full px-4 py-3 border rounded font-bold" style="border-color: #1E3A8A; background-color: #EFF6FF; color: #1E3A8A;">
+                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #5d6d7e;">New Balance</label>
+                            <div class="w-full px-4 py-3 border-2 rounded-lg font-bold" style="border-color: #27ae60; background-color: #d4edda; color: #27ae60;">
                                 <span id="calculatedBalance">₱0.00</span>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #6B7280;">Status</label>
-                            <select name="status" id="updateStatus" class="w-full px-4 py-3 border rounded focus:outline-none focus:ring-2 font-semibold" style="border-color: #D1D5DB;">
+                            <label class="block text-xs font-semibold mb-2 uppercase" style="color: #5d6d7e;">Status</label>
+                            <select name="status" id="updateStatus" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-blue-500 font-semibold" style="border-color: #d1d5db;">
                                 <option value="unpaid">Unpaid</option>
                                 <option value="partial">Partial</option>
                                 <option value="paid">Paid</option>
@@ -228,11 +231,11 @@
                         </div>
 
                         <div class="flex justify-end gap-3 pt-4">
-                            <button type="button" onclick="closeModal()" class="px-6 py-2.5 rounded transition text-sm font-medium" style="background-color: #F3F4F6; color: #374151; border: 1px solid #D1D5DB;">
+                            <button type="button" onclick="closeModal()" class="px-6 py-2.5 rounded-lg transition text-sm font-medium" style="background-color: #95a5a6; color: #ffffff;">
                                 Close
                             </button>
-                            <button type="submit" class="px-6 py-2.5 text-white rounded transition text-sm font-medium hover:opacity-90" style="background-color: #1E3A8A;">
-                                <i class="fas fa-check mr-1"></i> Update Payment
+                            <button type="submit" class="px-6 py-2.5 text-white rounded-lg transition text-sm font-medium hover:opacity-90" style="background-color: #0d5cb6;">
+                                <i class="fas fa-check mr-1"></i>Update Payment
                             </button>
                         </div>
                     </form>
@@ -245,21 +248,20 @@
                     @csrf
                     @method('PUT')
                     
-                    <h4 class="font-bold mb-4 flex items-center" style="color: #111827;">
-                        <i class="fas fa-edit mr-2" style="color: #1E3A8A;"></i>
-                        Edit Billing Items
+                    <h4 class="font-bold mb-4 flex items-center" style="color: #2c3e50;">
+                        <i class="fas fa-edit mr-2" style="color: #f4d03f;"></i>Edit Billing Items
                     </h4>
                     <div id="editBillItems" class="mb-4 space-y-3"></div>
-                    <button type="button" onclick="addEditItem()" class="px-4 py-2 text-white rounded text-sm font-medium transition mb-4 hover:opacity-90" style="background-color: #059669;">
-                        <i class="fas fa-plus mr-1"></i> Add Item
+                    <button type="button" onclick="addEditItem()" class="px-4 py-2 text-white rounded-lg text-sm font-medium transition mb-4 hover:opacity-90" style="background-color: #27ae60;">
+                        <i class="fas fa-plus mr-1"></i>Add Item
                     </button>
                     
-                    <div class="flex justify-end gap-3 pt-4" style="border-top: 1px solid #E5E7EB;">
-                        <button type="button" onclick="cancelEdit()" class="px-6 py-2.5 rounded transition text-sm font-medium" style="background-color: #F3F4F6; color: #374151; border: 1px solid #D1D5DB;">
+                    <div class="flex justify-end gap-3 pt-4" style="border-top: 1px solid #e5e7eb;">
+                        <button type="button" onclick="cancelEdit()" class="px-6 py-2.5 rounded-lg transition text-sm font-medium" style="background-color: #95a5a6; color: #ffffff;">
                             Cancel
                         </button>
-                        <button type="submit" class="px-6 py-2.5 text-white rounded transition text-sm font-medium hover:opacity-90" style="background-color: #1E3A8A;">
-                            <i class="fas fa-save mr-1"></i> Save Changes
+                        <button type="submit" class="px-6 py-2.5 text-white rounded-lg transition text-sm font-medium hover:opacity-90" style="background-color: #0d5cb6;">
+                            <i class="fas fa-save mr-1"></i>Save Changes
                         </button>
                     </div>
                 </form>
@@ -317,7 +319,6 @@ function viewBill(id) {
             currentBillData = data;
             document.getElementById('billPetName').textContent = data.pet.name;
             
-            // Display first service or "Multiple services"
             let serviceText = '';
             if (data.items.length > 0) {
                 serviceText = data.items[0].description;
@@ -326,16 +327,14 @@ function viewBill(id) {
                 }
             }
             document.getElementById('billService').textContent = serviceText || 'No services';
-            
-            // Add date field
             document.getElementById('billDate').textContent = data.created_at ? new Date(data.created_at).toLocaleDateString() : 'N/A';
             
             let itemsHTML = '';
             data.items.forEach((item, index) => {
                 itemsHTML += `
                     <div class="flex justify-between p-4 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
-                        <span class="text-sm font-medium" style="color: #374151;">${item.description}</span>
-                        <span class="font-bold text-sm" style="color: #1E3A8A;">₱${parseFloat(item.amount).toFixed(2)}</span>
+                        <span class="text-sm font-medium" style="color: #5d6d7e;">${item.description}</span>
+                        <span class="font-bold text-sm" style="color: #0d5cb6;">₱${parseFloat(item.amount).toFixed(2)}</span>
                     </div>
                 `;
             });
@@ -357,10 +356,6 @@ function viewBill(id) {
             billModal.style.display = 'block';
         })
         .catch(error => console.error('Error:', error));
-}
-
-function editBill(id) {
-    viewBill(id);
 }
 
 document.getElementById('paymentAmount').addEventListener('input', function() {
@@ -430,19 +425,19 @@ function enableEditMode() {
 
 function createEditItemHTML(index, description = '', amount = '') {
     return `
-        <div class="bill-item p-4 border rounded" style="border-color: #D1D5DB; background-color: #F9FAFB;">
+        <div class="bill-item p-4 border rounded-lg" style="border-color: #d1d5db; background-color: #f9fafb;">
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-semibold mb-1" style="color: #6B7280;">Description</label>
-                    <input type="text" name="items[${index}][description]" value="${description}" placeholder="Service description" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 text-sm" style="border-color: #D1D5DB;">
+                    <label class="block text-xs font-semibold mb-1" style="color: #5d6d7e;">Description</label>
+                    <input type="text" name="items[${index}][description]" value="${description}" placeholder="Service description" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 text-sm" style="border-color: #d1d5db;">
                 </div>
                 <div class="flex gap-2">
                     <div class="flex-1">
-                        <label class="block text-xs font-semibold mb-1" style="color: #6B7280;">Amount</label>
-                        <input type="number" name="items[${index}][amount]" value="${amount}" placeholder="0.00" step="0.01" min="0" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 text-sm" style="border-color: #D1D5DB;">
+                        <label class="block text-xs font-semibold mb-1" style="color: #5d6d7e;">Amount</label>
+                        <input type="number" name="items[${index}][amount]" value="${amount}" placeholder="0.00" step="0.01" min="0" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 text-sm" style="border-color: #d1d5db;">
                     </div>
                     <div class="flex items-end">
-                        <button type="button" onclick="removeEditItem(this)" class="px-3 py-2 text-white rounded transition text-sm font-bold hover:opacity-90" style="background-color: #DC2626;" title="Remove item">
+                        <button type="button" onclick="removeEditItem(this)" class="px-3 py-2 text-white rounded-lg transition text-sm font-bold hover:opacity-90" style="background-color: #e74c3c;" title="Remove item">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -483,5 +478,23 @@ billModal.addEventListener('click', function(e) {
 
 filterBills();
 </script>
+
+<style>
+#statusFilter:hover {
+    background-color: #f9e79f;
+}
+
+tbody td {
+    vertical-align: middle;
+}
+
+.fas {
+    font-size: 1.125rem;
+}
+
+button:hover, a:hover {
+    opacity: 0.8;
+}
+</style>
 
 @endsection

@@ -10,7 +10,7 @@
 </div>
 
 <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-    <!-- Header with solid color -->
+    <!-- Header -->
     <div class="bg-[#1e3a5f] p-8">
         <div>
             <h2 class="text-4xl font-bold mb-2 text-white">{{ $petOwner->user->name }}</h2>
@@ -63,9 +63,9 @@
         <div class="mt-8">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-[#2d3748]">Pets ({{ $petOwner->pets->count() }})</h3>
-                <a href="{{ route('pets.create', ['owner_id' => $petOwner->id]) }}" class="px-4 py-2 bg-[#0066cc] text-white rounded hover:bg-[#003d82]">
+                <!-- <a href="{{ route('pets.create', ['owner_id' => $petOwner->id]) }}" class="px-4 py-2 bg-[#0066cc] text-white rounded hover:bg-[#003d82]">
                     <i class="fas fa-plus mr-2"></i>Add Pet
-                </a>
+                </a> -->
             </div>
 
             @if($petOwner->pets->count() > 0)

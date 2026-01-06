@@ -17,11 +17,12 @@
         <!-- Main Information -->
         <div class="bg-white shadow-lg rounded-lg p-6 border-2 border-gray-200">
             <h2 class="text-xl font-bold text-[#1e3a5f] mb-6 flex items-center pb-4 border-b-2 border-gray-200">
-                <i class="fas fa-paw text-[#d4931d] mr-2"></i>PetPro Veterinary Clinic Co.
+                <i class="fas fa-paw text-[#d4931d] mr-2"></i>{{ $clinicDetails->clinic_name }}
             </h2>
             
             <div class="space-y-6">
                 <!-- Phone -->
+                @if($clinicDetails->phone)
                 <div class="flex items-start hover:bg-blue-50 p-3 rounded-lg transition-colors">
                     <div class="flex-shrink-0">
                         <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-[#1e3a5f] shadow-md">
@@ -31,12 +32,14 @@
                     <div class="ml-4">
                         <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wide">Phone Number</h3>
                         <p class="mt-2 text-lg font-semibold text-gray-900">
-                            <a href="tel:09173211830" class="text-[#1e3a5f] hover:text-[#d4931d] transition-colors">0917-321-1830</a>
+                            <a href="tel:{{ str_replace('-', '', $clinicDetails->phone) }}" class="text-[#1e3a5f] hover:text-[#d4931d] transition-colors">{{ $clinicDetails->phone }}</a>
                         </p>
                     </div>
                 </div>
+                @endif
 
                 <!-- Email -->
+                @if($clinicDetails->email)
                 <div class="flex items-start hover:bg-green-50 p-3 rounded-lg transition-colors">
                     <div class="flex-shrink-0">
                         <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-[#d4931d] shadow-md">
@@ -46,12 +49,14 @@
                     <div class="ml-4">
                         <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wide">Email Address</h3>
                         <p class="mt-2 text-lg font-semibold text-gray-900">
-                            <a href="mailto:petpro@gmail.com" class="text-[#1e3a5f] hover:text-[#d4931d] transition-colors">petpro@gmail.com</a>
+                            <a href="mailto:{{ $clinicDetails->email }}" class="text-[#1e3a5f] hover:text-[#d4931d] transition-colors">{{ $clinicDetails->email }}</a>
                         </p>
                     </div>
                 </div>
+                @endif
 
                 <!-- Address -->
+                @if($clinicDetails->address)
                 <div class="flex items-start hover:bg-yellow-50 p-3 rounded-lg transition-colors">
                     <div class="flex-shrink-0">
                         <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-[#fdb913] shadow-md">
@@ -61,12 +66,14 @@
                     <div class="ml-4">
                         <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wide">Address</h3>
                         <p class="mt-2 text-base font-medium text-gray-900">
-                            UNIT A & B, Adora BLDG, Malabanban Sur, Candelaria
+                            {{ $clinicDetails->address }}
                         </p>
                     </div>
                 </div>
+                @endif
 
                 <!-- Facebook -->
+                @if($clinicDetails->facebook)
                 <div class="flex items-start hover:bg-blue-50 p-3 rounded-lg transition-colors">
                     <div class="flex-shrink-0">
                         <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-[#1e3a5f] shadow-md">
@@ -76,10 +83,11 @@
                     <div class="ml-4">
                         <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wide">Follow Us on Facebook</h3>
                         <p class="mt-2 text-lg font-semibold text-[#1e3a5f]">
-                            PetPro Veterinary Clinic
+                            {{ $clinicDetails->facebook }}
                         </p>
                     </div>
                 </div>
+                @endif
             </div>
         </div>
 
@@ -90,41 +98,63 @@
             </h2>
             
             <div class="space-y-4">
+                @php
+                    $hours = $clinicDetails->business_hours;
+                @endphp
+
+                <!-- Weekdays -->
+                @if(isset($hours['weekdays']))
                 <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border-2 border-blue-200">
                     <div class="flex justify-between items-center">
                         <span class="text-gray-700 font-bold flex items-center">
-                            <i class="fas fa-calendar-week text-[#1e3a5f] mr-2"></i>Monday - Friday
+                            <i class="fas fa-calendar-week text-[#1e3a5f] mr-2"></i>{{ $hours['weekdays']['label'] ?? 'Monday - Friday' }}
                         </span>
-                        <span class="text-gray-900 font-semibold">8:00 AM - 6:00 PM</span>
+                        <span class="text-gray-900 font-semibold">
+                            {{ date('g:i A', strtotime($hours['weekdays']['start'])) }} - {{ date('g:i A', strtotime($hours['weekdays']['end'])) }}
+                        </span>
                     </div>
                 </div>
+                @endif
                 
+                <!-- Saturday -->
+                @if(isset($hours['saturday']))
                 <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border-2 border-blue-200">
                     <div class="flex justify-between items-center">
                         <span class="text-gray-700 font-bold flex items-center">
-                            <i class="fas fa-calendar-day text-[#d4931d] mr-2"></i>Saturday
+                            <i class="fas fa-calendar-day text-[#d4931d] mr-2"></i>{{ $hours['saturday']['label'] ?? 'Saturday' }}
                         </span>
-                        <span class="text-gray-900 font-semibold">9:00 AM - 4:00 PM</span>
+                        <span class="text-gray-900 font-semibold">
+                            {{ date('g:i A', strtotime($hours['saturday']['start'])) }} - {{ date('g:i A', strtotime($hours['saturday']['end'])) }}
+                        </span>
                     </div>
                 </div>
+                @endif
                 
+                <!-- Sunday -->
+                @if(isset($hours['sunday']))
                 <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border-2 border-blue-200">
                     <div class="flex justify-between items-center">
                         <span class="text-gray-700 font-bold flex items-center">
-                            <i class="fas fa-calendar text-[#fdb913] mr-2"></i>Sunday
+                            <i class="fas fa-calendar text-[#fdb913] mr-2"></i>{{ $hours['sunday']['label'] ?? 'Sunday' }}
                         </span>
-                        <span class="text-gray-900 font-semibold">10:00 AM - 2:00 PM</span>
+                        <span class="text-gray-900 font-semibold">
+                            {{ date('g:i A', strtotime($hours['sunday']['start'])) }} - {{ date('g:i A', strtotime($hours['sunday']['end'])) }}
+                        </span>
                     </div>
                 </div>
+                @endif
                 
+                <!-- Emergency -->
+                @if(isset($hours['emergency']))
                 <div class="bg-red-50 rounded-lg p-4 shadow-md border-2 border-red-300">
                     <div class="flex justify-between items-center">
                         <span class="text-red-700 font-bold flex items-center">
                             <i class="fas fa-ambulance text-red-600 mr-2 animate-pulse"></i>Emergency
                         </span>
-                        <span class="text-red-700 font-bold text-lg">24/7 Available</span>
+                        <span class="text-red-700 font-bold text-lg">{{ $hours['emergency'] }}</span>
                     </div>
                 </div>
+                @endif
             </div>
 
             <!-- Additional Info -->
@@ -138,123 +168,33 @@
     </div>
 
     <!-- Services Section -->
+    @if($services->count() > 0)
     <div class="bg-white shadow-lg rounded-lg p-6 border-2 border-gray-200">
         <h2 class="text-2xl font-bold text-[#1e3a5f] mb-6 flex items-center pb-4 border-b-2 border-gray-200">
             <i class="fas fa-concierge-bell text-[#d4931d] mr-3"></i>Our Services
         </h2>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Consultation -->
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #d4931d;">
+            @foreach($services as $index => $service)
+            <div class="bg-gradient-to-br {{ $index % 2 == 0 ? 'from-blue-50 to-blue-100' : 'from-yellow-50 to-yellow-100' }} rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: {{ $index % 2 == 0 ? '#d4931d' : '#fdb913' }};">
                 <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #d4931d;">
-                        <i class="fas fa-stethoscope text-white"></i>
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: {{ $index % 2 == 0 ? '#d4931d' : '#fdb913' }};">
+                        <i class="{{ $service->icon }} text-white"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Consultation</h3>
+                    <h3 class="text-lg font-bold text-[#1e3a5f]">{{ $service->name }}</h3>
                 </div>
-                <p class="text-sm text-gray-600">Professional veterinary consultation for your pet's health</p>
-                <p class="text-base font-bold text-[#d4931d] mt-2">₱500</p>
+                @if($service->description)
+                <p class="text-sm text-gray-600">{{ $service->description }}</p>
+                @endif
+                <p class="text-base font-bold mt-2" style="color: {{ $index % 2 == 0 ? '#d4931d' : '#fdb913' }};">{{ $service->price_range }}</p>
             </div>
-
-            <!-- Surgery -->
-            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #fdb913;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #fdb913;">
-                        <i class="fas fa-scalpel text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Surgery</h3>
-                </div>
-                <p class="text-sm text-gray-600">Advanced surgical procedures by experienced surgeons</p>
-                <p class="text-base font-bold text-[#fdb913] mt-2">₱2,000 - ₱15,000</p>
-            </div>
-
-            <!-- Vaccination -->
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #d4931d;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #d4931d;">
-                        <i class="fas fa-syringe text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Vaccination</h3>
-                </div>
-                <p class="text-sm text-gray-600">Complete vaccination programs to protect your pet</p>
-                <p class="text-base font-bold text-[#d4931d] mt-2">₱300 - ₱1,500</p>
-            </div>
-
-            <!-- Deworming -->
-            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #fdb913;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #fdb913;">
-                        <i class="fas fa-pills text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Deworming</h3>
-                </div>
-                <p class="text-sm text-gray-600">Parasite prevention and treatment programs</p>
-                <p class="text-base font-bold text-[#fdb913] mt-2">₱200 - ₱800</p>
-            </div>
-
-            <!-- Laboratory -->
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #d4931d;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #d4931d;">
-                        <i class="fas fa-flask text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Laboratory</h3>
-                </div>
-                <p class="text-sm text-gray-600">Comprehensive diagnostic testing and lab services</p>
-                <p class="text-base font-bold text-[#d4931d] mt-2">₱500 - ₱3,000</p>
-            </div>
-
-            <!-- Pharmacy -->
-            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #fdb913;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #fdb913;">
-                        <i class="fas fa-prescription-bottle-alt text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Pharmacy</h3>
-                </div>
-                <p class="text-sm text-gray-600">Full-service pharmacy with quality medications</p>
-                <p class="text-base font-bold text-[#fdb913] mt-2">Varies by medication</p>
-            </div>
-
-            <!-- Grooming -->
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #d4931d;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #d4931d;">
-                        <i class="fas fa-cut text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Grooming</h3>
-                </div>
-                <p class="text-sm text-gray-600">Professional grooming services for your pet</p>
-                <p class="text-base font-bold text-[#d4931d] mt-2">₱350 - ₱1,200</p>
-            </div>
-
-            <!-- Boarding -->
-            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #fdb913;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #fdb913;">
-                        <i class="fas fa-home text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Boarding</h3>
-                </div>
-                <p class="text-sm text-gray-600">Safe and comfortable boarding facilities</p>
-                <p class="text-base font-bold text-[#fdb913] mt-2">₱300 - ₱600/day</p>
-            </div>
-
-            <!-- Dog & Cat Food -->
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border-l-4 hover:shadow-lg transition-shadow" style="border-color: #d4931d;">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #d4931d;">
-                        <i class="fas fa-bone text-white"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-[#1e3a5f]">Dog & Cat Food</h3>
-                </div>
-                <p class="text-sm text-gray-600">Premium quality pet food and nutrition products</p>
-                <p class="text-base font-bold text-[#d4931d] mt-2">₱150 - ₱2,500</p>
-            </div>
+            @endforeach
         </div>
     </div>
+    @endif
 
     <!-- Location/Map Info -->
+    @if($clinicDetails->address)
     <div class="bg-white shadow-lg rounded-lg p-6 border-2 border-gray-200">
         <h2 class="text-xl font-bold text-[#1e3a5f] mb-4 flex items-center pb-4 border-b-2 border-gray-200">
             <i class="fas fa-map-marked-alt text-[#d4931d] mr-2"></i>Visit Us
@@ -262,7 +202,7 @@
         
         <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-6 mb-4">
             <p class="text-gray-700 text-base leading-relaxed">
-                We're conveniently located at <span class="font-bold text-[#1e3a5f]">UNIT A & B, Adora BLDG, Malabanban Sur, Candelaria</span>. Our modern facilities and experienced team are ready to provide the best care for your pets.
+                We're conveniently located at <span class="font-bold text-[#1e3a5f]">{{ $clinicDetails->address }}</span>. Our modern facilities and experienced team are ready to provide the best care for your pets.
             </p>
         </div>
 
@@ -287,6 +227,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Call to Action -->
     <div class="bg-gradient-to-r from-[#1e3a5f] to-[#2b5a8e] shadow-lg rounded-lg p-8 text-center">

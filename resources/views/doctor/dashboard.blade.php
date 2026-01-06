@@ -247,10 +247,10 @@
                     <i class="fas fa-calendar-alt mr-2"></i>
                     View Appointments
                 </a>
-                <a href="{{ route('doctor.patients') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition" style="background-color: #9b59b6;">
+                <!-- <a href="{{ route('doctor.pets') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition" style="background-color: #9b59b6;">
                     <i class="fas fa-paw mr-2"></i>
                     View Patients
-                </a>
+                </a> -->
                 <a href="{{ route('doctor.medical-records') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition" style="background-color: #d68910;">
                     <i class="fas fa-file-medical mr-2"></i>
                     Medical Records

@@ -10,8 +10,8 @@
         <p class="text-gray-200">Welcome to the Veterinary Clinic Management System</p>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Statistics Cards - Now 5 cards in better proportion -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <a href="{{ route('admin.pets') }}" class="bg-[#0d47a1] overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition cursor-pointer">
             <div class="p-4">
                 <div class="flex items-center justify-between">
@@ -63,16 +63,35 @@
             </div>
         </a>
 
-        <a href="{{ route('admin.medical-records') }}" class="bg-[#1e3a5f] overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition cursor-pointer">
+        <!-- Walk-in Appointments Card -->
+        <a href="{{ route('admin.appointments', ['source' => 'walk-in']) }}" class="bg-[#8b5cf6] overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition cursor-pointer">
             <div class="p-4">
                 <div class="flex items-center justify-between">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-file-medical text-[#ffd700] text-xl"></i>
+                        <i class="fas fa-walking text-white text-xl"></i>
                     </div>
                     <div class="flex-1 text-center">
                         <dl>
-                            <dt class="text-xs font-medium text-gray-200">Medical Records</dt>
-                            <dd class="mt-1 text-2xl font-semibold text-white">{{ $stats['total_medical_records'] }}</dd>
+                            <dt class="text-xs font-medium text-gray-100">Walk-in</dt>
+                            <dd class="mt-1 text-2xl font-semibold text-white">{{ $stats['walkin_appointments'] }}</dd>
+                        </dl>
+                    </div>
+                    <div class="w-6"></div>
+                </div>
+            </div>
+        </a>
+
+        <!-- Online Appointments Card -->
+        <a href="{{ route('admin.appointments', ['source' => 'online']) }}" class="bg-[#0066cc] overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition cursor-pointer">
+            <div class="p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-laptop text-[#ffd700] text-xl"></i>
+                    </div>
+                    <div class="flex-1 text-center">
+                        <dl>
+                            <dt class="text-xs font-medium text-gray-200">Online</dt>
+                            <dd class="mt-1 text-2xl font-semibold text-white">{{ $stats['online_appointments'] }}</dd>
                         </dl>
                     </div>
                     <div class="w-6"></div>
@@ -142,7 +161,7 @@
     <div class="bg-white shadow-lg rounded-lg border-t-4 border-[#1e3a5f]">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg leading-6 font-medium text-[#1e3a5f] mb-4">Quick Actions</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a href="{{ route('pets.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#0d47a1] hover:bg-[#1565c0] transition">
                     <i class="fas fa-plus mr-2"></i>
                     Add Pet

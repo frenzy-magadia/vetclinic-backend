@@ -205,10 +205,7 @@
                                     <i class="fas fa-calendar-alt mr-3 w-5"></i>
                                     <span class="text-sm sm:text-base">Appointments</span>
                                 </a>
-                                <a href="{{ route('admin.medical-records') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
-                                    <i class="fas fa-file-medical mr-3 w-5"></i>
-                                    <span class="text-sm sm:text-base">Medical Records</span>
-                                </a>
+                               
                                 <a href="{{ route('admin.inventory') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
                                     <i class="fas fa-boxes mr-3 w-5"></i>
                                     <span class="text-sm sm:text-base">Inventory</span>
@@ -232,6 +229,11 @@
                                     <span class="text-sm sm:text-base">Announcements</span>
                                 </a>
 
+                                <a href="{{ route('clinic.edit') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
+                                <i class="fas fa-hospital-alt mr-3"></i>
+                      <span>Clinic Settings</span>
+                        </a>
+
                             @elseif(Auth::user()->isPetOwner())
                                 <!-- Pet Owner Navigation -->
                                 <a href="{{ route('pet-owner.dashboard') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
@@ -246,10 +248,7 @@
                                     <i class="fas fa-calendar-alt mr-3 w-5"></i>
                                     <span class="text-sm sm:text-base">My Appointments</span>
                                 </a>
-                                <a href="{{ route('pet-owner.medical-records') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
-                                    <i class="fas fa-file-medical mr-3 w-5"></i>
-                                    <span class="text-sm sm:text-base">Medical Records</span>
-                                </a>
+                             
                                 <a href="{{ route('pet-owner.bills') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
                                     <i class="fas fa-file-invoice-dollar mr-3 w-5"></i>
                                     <span class="text-sm sm:text-base">Bills</span>
@@ -279,13 +278,23 @@
                                     <i class="fas fa-calendar-alt mr-3 w-5"></i>
                                     <span class="text-sm sm:text-base">Appointments</span>
                                 </a>
-                                <a href="{{ route('doctor.medical-records') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
-                                    <i class="fas fa-file-medical mr-3 w-5"></i>
-                                    <span class="text-sm sm:text-base">Medical Records</span>
+                              <a href="{{ route('doctor.pets') }}" 
+                                 class="flex items-center px-4 py-2.5 {{ request()->routeIs('doctor.pets') ? 'bg-[#0d5cb6] text-white' : 'text-gray-300 hover:bg-[#34495e]' }} rounded transition">
+                                <i class="fas fa-paw mr-3"></i>
+                               <span>Pets</span>
                                 </a>
-                                <a href="{{ route('doctor.patients') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
-                                    <i class="fas fa-users mr-3 w-5"></i>
-                                    <span class="text-sm sm:text-base">Patients</span>
+
+                            <a href="{{ route('doctor.pet-owners') }}" 
+                            class="flex items-center px-4 py-2.5 {{ request()->routeIs('doctor.pet-owners*') ? 'bg-[#0d5cb6] text-white' : 'text-gray-300 hover:bg-[#34495e]' }} rounded transition">
+                                  <i class="fas fa-users mr-3"></i>
+                                <span>Pet Owners</span>
+                                            </a>
+
+                                  </a>
+                              <a href="{{ route('doctor.medical-records') }}" 
+                                 class="flex items-center px-4 py-2.5 {{ request()->routeIs('doctor.medical-records') ? 'bg-[#0d5cb6] text-white' : 'text-gray-300 hover:bg-[#34495e]' }} rounded transition">
+                                <i class="fas fa-stethoscope mr-3"></i>
+                               <span>Medical Records</span>
                                 </a>
                                 <a href="{{ route('doctor.bills') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
                                     <i class="fas fa-dollar-sign mr-3 w-5"></i>
@@ -305,6 +314,10 @@
                                     <i class="fas fa-bullhorn mr-3 w-5"></i>
                                     <span class="text-sm sm:text-base">Announcements</span>
                                 </a>
+                                <a href="{{ route('clinic.edit') }}" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors">
+    <i class="fas fa-hospital-alt mr-3"></i>
+    <span>Clinic Settings</span>
+</a>
                             @endif
                         </nav>
                     </div>

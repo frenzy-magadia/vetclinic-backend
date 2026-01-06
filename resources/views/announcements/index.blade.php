@@ -25,7 +25,7 @@
                     class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0066cc]"
                 >
                 <button type="submit" class="bg-[#0066cc] text-white px-6 py-2 rounded-lg hover:bg-[#003d82]">
-                    Search
+                    <i class="fas fa-search mr-2"></i>Search
                 </button>
                 @if(request('search'))
                     <a href="{{ route('announcements.index') }}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400">
@@ -38,13 +38,40 @@
         <!-- Announcements List -->
         <div class="space-y-4">
             @forelse($announcements as $announcement)
-                <div class="bg-white border-l-4 border-[#0066cc] shadow rounded-lg p-4">
+                <div class="bg-white border-l-4 {{ $announcement->isExpired() ? 'border-gray-400' : 'border-[#0066cc]' }} shadow rounded-lg p-4">
                     <div class="flex justify-between items-start mb-2">
-                        <h3 class="text-lg font-bold text-[#2d3748]">{{ $announcement->title }}</h3>
-                        <span class="text-sm text-gray-500">{{ $announcement->created_at->format('M d, Y') }}</span>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-[#2d3748] {{ $announcement->isExpired() ? 'text-gray-500' : '' }}">
+                                {{ $announcement->title }}
+                                @if($announcement->isExpired())
+                                    <span class="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Ended</span>
+                                @endif
+                            </h3>
+                        </div>
+                        <div class="text-right ml-4">
+                            <span class="text-sm text-gray-500 block">
+                                <i class="fas fa-calendar mr-1"></i>{{ $announcement->created_at->format('M d, Y') }}
+                            </span>
+                            @if($announcement->expires_at)
+                                <span class="text-xs {{ $announcement->isExpired() ? 'text-gray-500' : 'text-red-500' }} block mt-1">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    @if($announcement->isExpired())
+                                        Ended: {{ $announcement->expires_at->format('M d, Y') }}
+                                    @else
+                                        Ends: {{ $announcement->expires_at->format('M d, Y') }}
+                                    @endif
+                                </span>
+                            @else
+                                <span class="text-xs text-green-600 block mt-1">
+                                    <i class="fas fa-infinity mr-1"></i>No end date
+                                </span>
+                            @endif
+                        </div>
                     </div>
                     
-                    <p class="text-gray-700 mb-3">{{ Str::limit($announcement->content, 200) }}</p>
+                    <p class="text-gray-700 mb-3 {{ $announcement->isExpired() ? 'text-gray-500' : '' }}">
+                        {{ Str::limit($announcement->content, 200) }}
+                    </p>
                     
                     <div class="flex justify-between items-center">
                         <div class="text-sm text-gray-500">

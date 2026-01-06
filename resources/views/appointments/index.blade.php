@@ -20,7 +20,7 @@
 
     <!-- Search and Filter Section -->
     <div class="flex items-center justify-between gap-4">
-        <!-- Status Filter Dropdown (Left) -->
+        <!-- Status Filter Dropdown  -->
         <form method="GET" action="{{ route('appointments.index') }}" id="filterForm">
             <div class="relative inline-block">
                 <select name="status" id="statusFilter" class="px-4 py-2 bg-yellow-300 text-gray-900 font-bold rounded-lg cursor-pointer hover:bg-yellow-400 transition text-sm">

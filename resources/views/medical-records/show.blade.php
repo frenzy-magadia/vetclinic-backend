@@ -119,40 +119,7 @@
     </div>
     @endif
 
-    <!-- Follow-up Information -->
-    @if($medicalRecord->followUpSchedules->count() > 0)
-    <div class="bg-white shadow-lg rounded-lg mb-6 border-2" style="border-color: #0d5cb6;">
-        <div class="px-6 py-3" style="background-color: #34495e;">
-            <h2 class="text-lg font-semibold text-white">Follow-up Schedule</h2>
-        </div>
-        <div class="p-6 space-y-4">
-            @foreach($medicalRecord->followUpSchedules as $followUp)
-            <div class="border rounded-lg p-4 bg-white" style="border-color: #e5e7eb;">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-sm" style="color: #5d6d7e;">Scheduled Date</p>
-                        <p class="text-base font-medium" style="color: #2c3e50;">{{ $followUp->scheduled_date->format('M d, Y') }}</p>
-                    </div>
-                    <span class="px-3 py-1 text-sm font-semibold rounded-full" 
-                        style="@if($followUp->status === 'pending') background-color: #f9a825; color: #ffffff;
-                        @elseif($followUp->status === 'completed') background-color: #28a745; color: #ffffff;
-                        @else background-color: #95a5a6; color: #ffffff; @endif">
-                        {{ ucfirst($followUp->status) }}
-                    </span>
-                </div>
-                @if($followUp->notes)
-                <div class="mt-3">
-                    <p class="text-sm" style="color: #5d6d7e;">Notes</p>
-                    <p style="color: #5d6d7e;">{{ $followUp->notes }}</p>
-                </div>
-                @endif
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-</div>
-
+    
 <style>
 button:hover {
     opacity: 0.9;

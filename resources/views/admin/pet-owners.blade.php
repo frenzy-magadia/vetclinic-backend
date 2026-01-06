@@ -120,17 +120,17 @@
 
             <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Phone</label>
+                    <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Phone *</label>
                     <input type="text" name="phone" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0d47a1]">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Emergency Phone</label>
+                    <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Emergency Phone </label>
                     <input type="text" name="emergency_phone" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0d47a1]">
                 </div>
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Address</label>
+                <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Address *</label>
                 <textarea name="address" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0d47a1]"></textarea>
             </div>
 

@@ -6,11 +6,11 @@
 <div class="container mx-auto px-4">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-[#2d3748]">
-            <i class="fas fa-paw text-[#fcd34d] mr-2"></i>Pets
+            <i class="fas fa-paw text-[#fcd34d] mr-2"></i>My Pets
         </h1>
         <a href="{{ route('pet-owner.pets.create') }}" 
-           class="inline-flex items-center px-4 py-2 bg-[#213B63] text-white rounded-lg hover:bg-[#003d82] transition-colors shadow-md">
-            <i class="fas fa-plus-circle mr-2 text-[#fcd34d]"></i>
+           class="inline-flex items-center px-4 py-2 bg-[#1e3a5f] text-white rounded-lg hover:bg-[#152d47] transition-colors shadow-md">
+            <i class="fas fa-plus-circle mr-2"></i>
             Register New Pet
         </a>
     </div>
@@ -39,7 +39,7 @@
             <h3 class="text-xl font-semibold text-gray-700 mb-2">No Pets Yet</h3>
             <p class="text-gray-500 mb-6">Register your first pet to start booking appointments!</p>
             <a href="{{ route('pet-owner.pets.create') }}" 
-               class="inline-flex items-center px-6 py-3 bg-[#213B63] text-white rounded-lg hover:bg-[#003d82] transition-colors">
+               class="inline-flex items-center px-6 py-3 bg-[#1e3a5f] text-white rounded-lg hover:bg-[#152d47] transition-colors">
                 <i class="fas fa-plus-circle mr-2"></i>
                 Register Your First Pet
             </a>
@@ -49,15 +49,15 @@
             @foreach($pets as $pet)
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                     <!-- Pet Header -->
-                    <div class="bg-[#213B63] p-4">
+                    <div class="bg-[#1e3a5f] p-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
-                                <div class="w-12 h-12 bg-[#fcd34d] rounded-full flex items-center justify-center mr-3">
-                                    <i class="fas fa-paw text-[#1e3a5f] text-xl"></i>
+                                <div class="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-paw text-gray-800 text-xl"></i>
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-white">{{ $pet->name }}</h3>
-                                    <p class="text-sm text-gray-200">{{ ucfirst($pet->species) }}</p>
+                                    <p class="text-sm text-gray-100">{{ ucfirst($pet->species) }}</p>
                                 </div>
                             </div>
                             
@@ -83,21 +83,21 @@
                         <div class="space-y-2 text-sm">
                             @if($pet->breed)
                                 <div class="flex items-center text-gray-600">
-                                    <i class="fas fa-dog w-5 text-[#d4931d]"></i>
+                                    <i class="fas fa-dog w-5 text-[#1e3a5f]"></i>
                                     <span class="ml-2">{{ $pet->breed }}</span>
                                 </div>
                             @endif
                             <div class="flex items-center text-gray-600">
-                                <i class="fas fa-birthday-cake w-5 text-[#d4931d]"></i>
+                                <i class="fas fa-birthday-cake w-5 text-[#1e3a5f]"></i>
                                 <span class="ml-2">{{ $pet->age }} {{ $pet->age == 1 ? 'year' : 'years' }} old</span>
                             </div>
                             <div class="flex items-center text-gray-600">
-                                <i class="fas fa-venus-mars w-5 text-[#d4931d]"></i>
+                                <i class="fas fa-venus-mars w-5 text-[#1e3a5f]"></i>
                                 <span class="ml-2">{{ ucfirst($pet->gender) }}</span>
                             </div>
                             @if($pet->weight)
                                 <div class="flex items-center text-gray-600">
-                                    <i class="fas fa-weight w-5 text-[#d4931d]"></i>
+                                    <i class="fas fa-weight w-5 text-[#1e3a5f]"></i>
                                     <span class="ml-2">{{ $pet->weight }} kg</span>
                                 </div>
                             @endif
@@ -117,7 +117,7 @@
                         @if($pet->approval_status === 'pending')
                             <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                                 <p class="text-xs text-yellow-800">
-                                    <i class="fas fa-hourglass-half"></i> Your pet registration is being reviewed by admin.
+                                    <i class="fas fa-hourglass-half"></i> Your pet registration is being reviewed by our admin team.
                                 </p>
                             </div>
                         @endif
@@ -125,11 +125,11 @@
                         <!-- Statistics -->
                         <div class="mt-4 pt-4 border-t border-gray-200 grid grid-cols-2 gap-4">
                             <div class="text-center">
-                                <p class="text-2xl font-bold text-[#213B63]">{{ $pet->appointments->count() }}</p>
+                                <p class="text-2xl font-bold text-[#1e3a5f]">{{ $pet->appointments->count() }}</p>
                                 <p class="text-xs text-gray-500">Appointments</p>
                             </div>
                             <div class="text-center">
-                                <p class="text-2xl font-bold text-[#213B63]">{{ $pet->medicalRecords->count() }}</p>
+                                <p class="text-2xl font-bold text-[#1e3a5f]">{{ $pet->medicalRecords->count() }}</p>
                                 <p class="text-xs text-gray-500">Records</p>
                             </div>
                         </div>
@@ -137,7 +137,7 @@
                         <!-- Actions -->
                         <div class="mt-4 flex gap-2">
                             <a href="{{ route('pet-owner.pets.show', $pet->id) }}" 
-                               class="flex-1 text-center px-3 py-2 bg-[#213B63] text-white text-sm rounded-lg hover:bg-[#003d82] transition-colors">
+                               class="flex-1 text-center px-3 py-2 bg-[#1e3a5f] text-white text-sm rounded-lg hover:bg-[#152d47] transition-colors">
                                 <i class="fas fa-eye mr-1"></i> View Details
                             </a>
                             

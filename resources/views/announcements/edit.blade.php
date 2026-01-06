@@ -32,7 +32,7 @@
                 @enderror
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Content *</label>
                 <textarea 
                     name="content" 
@@ -46,12 +46,32 @@
                 @enderror
             </div>
 
-            <div class="flex justify-end gap-2">
+            <div class="mb-6">
+                <label for="expires_at" class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-calendar-alt mr-1"></i>Expiration Date
+                </label>
+                <input 
+                    type="date" 
+                    name="expires_at" 
+                    id="expires_at" 
+                    value="{{ old('expires_at', $announcement->expires_at ? $announcement->expires_at->format('Y-m-d') : '') }}" 
+                    min="{{ date('Y-m-d') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0066cc] @error('expires_at') border-red-500 @enderror"
+                >
+                <p class="text-sm text-gray-500 mt-1">
+                    <i class="fas fa-info-circle mr-1"></i>Leave empty if the announcement should never expire. Pet owners will not see expired announcements.
+                </p>
+                @error('expires_at')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="flex justify-end gap-4">
                 <a href="{{ route('announcements.index') }}" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
                     Cancel
                 </a>
                 <button type="submit" class="px-6 py-2 bg-[#0066cc] text-white rounded-lg hover:bg-[#003d82]">
-                    Update Announcement
+                    <i class="fas fa-save mr-2"></i>Update Announcement
                 </button>
             </div>
         </form>

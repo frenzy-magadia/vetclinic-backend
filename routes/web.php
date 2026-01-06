@@ -12,6 +12,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ClinicController;
 
 // Public routes
 Route::get('/', function () {
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/appointments/available-slots', [AppointmentController::class, 'getAvailableTimeSlots'])->name('appointments.available-slots');
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/medical-records', [MedicalRecordController::class, 'index'])->name('medical-records.index');
     
     // Admin routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
@@ -77,6 +79,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports/medical-records/export', [ReportController::class, 'exportMedicalRecords'])->name('reports.medical-records.export');
         Route::get('/inventory/filter/{type}', [AdminController::class, 'inventoryFilter'])->name('inventory.filter');
         Route::get('/inventory/{inventory}', [InventoryController::class, 'show'])->name('inventory.show');
+        Route::post('/inventory/{inventory}/add-batch', [InventoryController::class, 'addBatch'])->name('inventory.add-batch');
+        Route::put('/inventory/batches/{batch}', [InventoryController::class, 'updateBatch'])->name('inventory.batches.update');
+        Route::delete('/inventory/batches/{batch}', [InventoryController::class, 'deleteBatch'])->name('inventory.batches.delete');
        
         // Delete routes
         Route::delete('/pets/{pet}', [AdminController::class, 'destroyPet'])->name('pets.destroy');
@@ -92,13 +97,21 @@ Route::middleware('auth')->group(function () {
         Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store'); 
         Route::post('/appointments/{appointment}/approve', [DoctorController::class, 'approveAppointment'])->name('appointments.approve');
         Route::post('/appointments/{appointment}/reject', [DoctorController::class, 'rejectAppointment'])->name('appointments.reject');
+
+        Route::get('/inventory-item/{inventoryItem}', [DoctorController::class, 'getInventoryItem'])->name('inventory-item');
         
         // Doctor cancellation approval routes
         Route::post('/appointments/{appointment}/approve-cancellation', [AppointmentController::class, 'approveCancellation'])->name('appointments.approve-cancellation');
         Route::post('/appointments/{appointment}/decline-cancellation', [AppointmentController::class, 'declineCancellation'])->name('appointments.decline-cancellation');
         
-        Route::get('/patients', [DoctorController::class, 'patients'])->name('patients');
+        // Pets and pet owners routes
+        Route::get('/pets', [DoctorController::class, 'pets'])->name('pets');
+        Route::get('/pet-owners', [DoctorController::class, 'petOwners'])->name('pet-owners');
+        Route::get('/pet-owners/{petOwner}', [DoctorController::class, 'showPetOwner'])->name('pet-owners.show');
+        
+        // Keep this for the pet details modal
         Route::get('/patients/{pet}/details', [DoctorController::class, 'getPatientDetails'])->name('patients.details');
+
         Route::get('/medical-records', [DoctorController::class, 'medicalRecords'])->name('medical-records');
         
         Route::get('/bills', [DoctorController::class, 'bills'])->name('bills');
@@ -138,13 +151,27 @@ Route::middleware('auth')->group(function () {
             Route::post('/appointments', [PetOwnerController::class, 'storeAppointment'])->name('appointments.store');
             Route::get('/appointments/available-slots', [PetOwnerController::class, 'getAvailableTimeSlots'])->name('appointments.available-slots');
             Route::post('/appointments/{appointment}/request-cancellation', [AppointmentController::class, 'requestCancellation'])->name('appointments.request-cancellation');   
-           
-            Route::get('/medical-records', [PetOwnerController::class, 'medicalRecords'])->name('medical-records');
             
-            Route::get('/clinic-details', [PetOwnerController::class, 'clinicDetails'])->name('clinic-details');
+            // Clinic details for pet owners (view only)
+            Route::get('/clinic-details', [ClinicController::class, 'show'])->name('clinic-details');
+            
             Route::delete('/pets/{pet}', [PetOwnerController::class, 'destroyPet'])->name('pets.destroy');
             Route::delete('/appointments/{appointment}', [PetOwnerController::class, 'destroyAppointment'])->name('appointments.destroy');
         });
+
+    // Clinic Management Routes (Admin & Doctor only)
+    Route::middleware(['auth', 'role:admin,doctor'])->group(function () {
+        // Clinic details management
+        Route::get('/clinic-settings', [ClinicController::class, 'edit'])->name('clinic.edit');
+        Route::put('/clinic-settings', [ClinicController::class, 'update'])->name('clinic.update');
+        
+        // Clinic services management
+        Route::get('/clinic-services', [ClinicController::class, 'services'])->name('clinic.services');
+        Route::post('/clinic-services', [ClinicController::class, 'storeService'])->name('clinic.services.store');
+        Route::put('/clinic-services/{service}', [ClinicController::class, 'updateService'])->name('clinic.services.update');
+        Route::delete('/clinic-services/{service}', [ClinicController::class, 'destroyService'])->name('clinic.services.destroy');
+        Route::post('/clinic-services/reorder', [ClinicController::class, 'reorderServices'])->name('clinic.services.reorder');
+    });
 
     // Message routes (accessible by all authenticated users)
     Route::prefix('messages')->name('messages.')->group(function() {
@@ -200,28 +227,31 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('appointments', AppointmentController::class);
     
-    // Medical-records management (create/edit/delete) only for admin and doctor
+    // Medical record CRUD operations
     Route::middleware('role:admin,doctor')->group(function() {
-        Route::resource('medical-records', MedicalRecordController::class)->except(['show']);
+        Route::get('/medical-records/create', [MedicalRecordController::class, 'create'])->name('medical-records.create');
+        Route::post('/medical-records', [MedicalRecordController::class, 'store'])->name('medical-records.store');
+        Route::get('/medical-records/{medicalRecord}/edit', [MedicalRecordController::class, 'edit'])->name('medical-records.edit');
+        Route::put('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'update'])->name('medical-records.update');
+        Route::delete('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
     });
     
-    // Allow authenticated users to view a medical record
-    Route::middleware('auth')->get('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
-    Route::resource('services', ServiceController::class);
-    Route::resource('inventory', InventoryController::class);
-    Route::post('/inventory/{inventory}/adjust-stock', [InventoryController::class, 'adjustStock'])->name('inventory.adjust-stock');
-    
-    // General cancellation routes (accessible by authenticated users)
-    Route::post('/appointments/{appointment}/approve-cancellation', [AppointmentController::class, 'approveCancellation'])->name('appointments.approve-cancellation');
-    Route::post('/appointments/{appointment}/decline-cancellation', [AppointmentController::class, 'declineCancellation'])->name('appointments.decline-cancellation');
-    Route::post('/appointments/{appointment}/request-cancellation', [AppointmentController::class, 'requestCancellation'])->name('appointments.request-cancellation');
-    
-    // Additional routes
-    Route::get('/appointments/calendar', [AppointmentController::class, 'calendar'])->name('appointments.calendar');
+    // Allow all authenticated users to view medical records
+    Route::get('/medical-records/{medicalRecord}', [MedicalRecordController::class, 'show'])->name('medical-records.show');
     
     // Medical record document routes
     Route::post('/medical-records/{medicalRecord}/upload-document', [MedicalRecordController::class, 'uploadDocument'])->name('medical-records.upload-document');
     Route::get('/documents/{documentId}/download', [MedicalRecordController::class, 'downloadDocument'])->name('documents.download');
+    
+    Route::resource('services', ServiceController::class);
+    Route::resource('inventory', InventoryController::class);
+    Route::post('/inventory/{inventory}/adjust-stock', [InventoryController::class, 'adjustStock'])->name('inventory.adjust-stock');
+    
+    // General cancellation routes 
+    Route::post('/appointments/{appointment}/approve-cancellation', [AppointmentController::class, 'approveCancellation'])->name('appointments.approve-cancellation');
+    Route::post('/appointments/{appointment}/decline-cancellation', [AppointmentController::class, 'declineCancellation'])->name('appointments.decline-cancellation');
+    Route::post('/appointments/{appointment}/request-cancellation', [AppointmentController::class, 'requestCancellation'])->name('appointments.request-cancellation');
+    Route::get('/appointments/calendar', [AppointmentController::class, 'calendar'])->name('appointments.calendar');
 
     // Mark appointment status routes (Admin/Doctor only)
     Route::middleware(['auth', 'role:admin,doctor'])->group(function () {

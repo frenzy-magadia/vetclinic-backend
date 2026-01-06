@@ -4,288 +4,494 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-8">
-    <div class="bg-white shadow rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-900">Edit Medical Record</h1>
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4" style="background-color: #34495e;">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-white">
+                    <i class="fas fa-edit mr-2" style="color: #f4d03f;"></i>Edit Medical Record
+                </h1>
                 @if(Auth::user()->isAdmin())
-                    <a href="{{ route('admin.medical-records') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    <a href="{{ route('admin.medical-records') }}" class="px-4 py-2 rounded-lg transition" style="background-color: #95a5a6; color: #ffffff;">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
                     </a>
                 @elseif(Auth::user()->isDoctor())
-                    <a href="{{ route('doctor.medical-records') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    <a href="{{ route('doctor.medical-records') }}" class="px-4 py-2 rounded-lg transition" style="background-color: #95a5a6; color: #ffffff;">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
                     </a>
                 @else
-                    <a href="{{ route('pet-owner.medical-records') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    <a href="{{ route('pet-owner.medical-records') }}" class="px-4 py-2 rounded-lg transition" style="background-color: #95a5a6; color: #ffffff;">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
                     </a>
                 @endif
             </div>
-
-            <form method="POST" action="{{ route('medical-records.update', $medicalRecord->id) }}" class="space-y-6">
-                @csrf
-                @method('PUT')
-
-                <!-- Pet and Doctor Selection -->
-                <div class="grid grid-cols-1 gap-6">
-                    <div>
-                        <label for="pet_id" class="block text-sm font-medium text-gray-700">Pet *</label>
-                        <select id="pet_id" name="pet_id" required 
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('pet_id') border-red-500 @enderror">
-                            <option value="">Select pet</option>
-                            @foreach($pets as $pet)
-                            <option value="{{ $pet->id }}" {{ $medicalRecord->pet_id == $pet->id ? 'selected' : '' }}>
-                                {{ $pet->name }} ({{ $pet->owner->user->name }})
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('pet_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Doctor Info (Read-only display) -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Attending Doctor</label>
-                        <div class="mt-1 px-3 py-2 border border-gray-200 rounded-md bg-gray-50">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-user-md text-blue-600"></i>
-                                <span class="font-medium text-gray-900">{{ $doctor->user->name }}</span>
-                                @if($doctor->specialization)
-                                    <span class="text-sm text-gray-500">({{ $doctor->specialization }})</span>
-                                @endif
-                            </div>
-                        </div>
-                        <p class="mt-1 text-xs text-gray-500">Doctor is automatically assigned</p>
-                    </div>
-                </div>
-
-                <!-- Appointment Selection -->
-                <div>
-                    <label for="appointment_id" class="block text-sm font-medium text-gray-700">Related Appointment (Optional)</label>
-                    <select id="appointment_id" name="appointment_id" 
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('appointment_id') border-red-500 @enderror">
-                        <option value="">Select appointment</option>
-                        @foreach($appointments as $appointment)
-                        <option value="{{ $appointment->id }}" {{ $medicalRecord->appointment_id == $appointment->id ? 'selected' : '' }}>
-                            {{ $appointment->pet->name }} - {{ $appointment->service->name }} ({{ $appointment->appointment_date->format('M d, Y') }})
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('appointment_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Diagnosis -->
-                <div>
-                    <label for="diagnosis" class="block text-sm font-medium text-gray-700">Diagnosis *</label>
-                    <textarea id="diagnosis" name="diagnosis" rows="4" required 
-                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('diagnosis') border-red-500 @enderror" 
-                              placeholder="Enter diagnosis details...">{{ old('diagnosis', $medicalRecord->diagnosis) }}</textarea>
-                    @error('diagnosis')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Treatment -->
-                <div>
-                    <label for="treatment" class="block text-sm font-medium text-gray-700">Treatment *</label>
-                    <textarea id="treatment" name="treatment" rows="4" required 
-                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('treatment') border-red-500 @enderror" 
-                              placeholder="Enter treatment details...">{{ old('treatment', $medicalRecord->treatment) }}</textarea>
-                    @error('treatment')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- General Prescription Notes -->
-                <div>
-                    <label for="prescription" class="block text-sm font-medium text-gray-700">General Prescription Notes</label>
-                    <textarea id="prescription" name="prescription" rows="3" 
-                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('prescription') border-red-500 @enderror" 
-                              placeholder="Enter general prescription notes...">{{ old('prescription', $medicalRecord->prescription) }}</textarea>
-                    @error('prescription')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Medications -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Medications</label>
-                    <div id="medications-container">
-                        @forelse($medicalRecord->prescriptions as $index => $prescription)
-                        <div class="medication-row grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Medication Name</label>
-                                <input type="text" name="medications[{{ $index }}][name]" value="{{ old("medications.$index.name", $prescription->medication_name) }}"
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., Amoxicillin">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Dosage</label>
-                                <input type="text" name="medications[{{ $index }}][dosage]" value="{{ old("medications.$index.dosage", $prescription->dosage) }}"
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., 250mg">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Frequency</label>
-                                <input type="text" name="medications[{{ $index }}][frequency]" value="{{ old("medications.$index.frequency", $prescription->frequency) }}"
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., Twice daily">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Duration (days)</label>
-                                <input type="number" name="medications[{{ $index }}][duration_days]" value="{{ old("medications.$index.duration_days", $prescription->duration_days) }}" min="1" 
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="7">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Instructions</label>
-                                <input type="text" name="medications[{{ $index }}][instructions]" value="{{ old("medications.$index.instructions", $prescription->instructions) }}"
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., With food">
-                            </div>
-                            <div class="flex items-end">
-                                <button type="button" onclick="this.closest('.medication-row').remove()" class="inline-flex items-center px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="medication-row grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Medication Name</label>
-                                <input type="text" name="medications[0][name]" 
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., Amoxicillin">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Dosage</label>
-                                <input type="text" name="medications[0][dosage]" 
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., 250mg">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Frequency</label>
-                                <input type="text" name="medications[0][frequency]" 
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., Twice daily">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Duration (days)</label>
-                                <input type="number" name="medications[0][duration_days]" min="1" 
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="7">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600">Instructions</label>
-                                <input type="text" name="medications[0][instructions]" 
-                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       placeholder="e.g., With food">
-                            </div>
-                        </div>
-                        @endforelse
-                    </div>
-                    <button type="button" id="add-medication" class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        <i class="fas fa-plus mr-2"></i>
-                        Add Medication
-                    </button>
-                </div>
-
-                <!-- Follow-up Schedule -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="follow_up_date" class="block text-sm font-medium text-gray-700">Follow-up Date</label>
-                        <input id="follow_up_date" name="follow_up_date" type="date" 
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm @error('follow_up_date') border-red-500 @enderror" 
-                               value="{{ old('follow_up_date', $medicalRecord->follow_up_date ? $medicalRecord->follow_up_date : '') }}">
-                        @error('follow_up_date')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="follow_up_notes" class="block text-sm font-medium text-gray-700">Follow-up Notes</label>
-                        <input id="follow_up_notes" name="follow_up_notes" type="text" 
-                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                               placeholder="Follow-up instructions..." 
-                               value="{{ old('follow_up_notes', $medicalRecord->followUpSchedules->first()->notes ?? '') }}">
-                    </div>
-                </div>
-
-                <!-- Submit Buttons -->
-                <div class="flex justify-end space-x-3 pt-4 border-t">
-                    @if(Auth::user()->isAdmin())
-                        <a href="{{ route('admin.medical-records') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                            Cancel
-                        </a>
-                    @elseif(Auth::user()->isDoctor())
-                        <a href="{{ route('doctor.medical-records') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                            Cancel
-                        </a>
-                    @else
-                        <a href="{{ route('pet-owner.medical-records') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                            Cancel
-                        </a>
-                    @endif
-                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                        <i class="fas fa-save mr-2"></i>
-                        Update Medical Record
-                    </button>
-                </div>
-            </form>
         </div>
+
+        @if($errors->any())
+            <div class="mx-6 mt-6 border-l-4 p-4 rounded" style="background-color: #f8d7da; border-color: #d32f2f; color: #721c24;">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('medical-records.update', $medicalRecord->id) }}" class="p-6">
+            @csrf
+            @method('PUT')
+
+            <!-- Pet Selection (Read-only) -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2" style="color: #2c3e50;">
+                    <i class="fas fa-paw mr-1" style="color: #f4d03f;"></i>Pet
+                </label>
+                <div class="p-4 rounded-lg border-2" style="background-color: #f3f4f6; border-color: #d1d5db;">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-lg" style="color: #2c3e50;">
+                                <i class="fas fa-paw mr-2" style="color: #3498db;"></i>
+                                {{ $medicalRecord->pet->name }}
+                            </p>
+                            <p class="text-sm mt-1" style="color: #5d6d7e;">
+                                {{ ucfirst($medicalRecord->pet->species) }} 
+                                @if($medicalRecord->pet->breed)
+                                    - {{ $medicalRecord->pet->breed }}
+                                @endif
+                                | Owner: {{ $medicalRecord->pet->owner->user->name }}
+                            </p>
+                        </div>
+                        <span class="px-3 py-1 rounded text-xs font-semibold" style="background-color: #95a5a6; color: #ffffff;">
+                            <i class="fas fa-lock mr-1"></i>Locked
+                        </span>
+                    </div>
+                </div>
+                <input type="hidden" name="pet_id" value="{{ $medicalRecord->pet_id }}">
+                <p class="mt-2 text-sm" style="color: #5d6d7e;">
+                    <i class="fas fa-info-circle mr-1"></i>Pet cannot be changed after record creation
+                </p>
+            </div>
+
+            <!-- Doctor Info (Read-only) -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2" style="color: #2c3e50;">
+                    <i class="fas fa-user-md mr-1" style="color: #f4d03f;"></i>Attending Doctor
+                </label>
+                <div class="p-4 rounded-lg" style="background-color: #f3f4f6; border: 1px solid #d1d5db;">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-user-md" style="color: #3498db;"></i>
+                        <span class="font-medium" style="color: #2c3e50;">{{ $doctor->user->name }}</span>
+                        @if($doctor->specialization)
+                            <span class="text-sm" style="color: #5d6d7e;">({{ $doctor->specialization }})</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Selection with Search -->
+            <div class="mb-6">
+                <label for="appointment_search" class="block text-sm font-medium mb-2" style="color: #2c3e50;">
+                    <i class="fas fa-calendar-alt mr-1" style="color: #f4d03f;"></i>Related Appointment (Optional)
+                </label>
+                
+                <!-- Search Container -->
+                <div class="relative" id="appointment_search_container">
+                    <input 
+                        type="text" 
+                        id="appointment_search" 
+                        class="w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:border-blue-500" 
+                        style="border-color: #d1d5db;"
+                        placeholder="Search appointment by pet, service, or date..."
+                        autocomplete="off"
+                    >
+                    <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    
+                    <!-- Search Results Dropdown -->
+                    <div id="appointment_results" class="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg hidden max-h-64 overflow-y-auto" style="border-color: #d1d5db;">
+                        <!-- Results will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Hidden input for selected appointment ID -->
+                <input type="hidden" id="appointment_id" name="appointment_id" value="{{ old('appointment_id', $medicalRecord->appointment_id) }}">
+
+                <!-- Selected Appointment Display -->
+                <div id="selected_appointment_display" class="mt-3 p-4 rounded-lg border-2 {{ $medicalRecord->appointment_id ? '' : 'hidden' }}" style="background-color: #d6eaf8; border-color: #0d5cb6;">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold" style="color: #2c3e50;">
+                                <i class="fas fa-calendar-check mr-2" style="color: #0d5cb6;"></i>
+                                <span id="selected_appointment_name">
+                                    @if($medicalRecord->appointment)
+                                        {{ $medicalRecord->appointment->pet->name }} - {{ $medicalRecord->appointment->service->name }}
+                                    @endif
+                                </span>
+                            </p>
+                            <p class="text-sm mt-1" style="color: #5d6d7e;" id="selected_appointment_details">
+                                @if($medicalRecord->appointment)
+                                    {{ $medicalRecord->appointment->appointment_date->format('M d, Y') }} at {{ $medicalRecord->appointment->appointment_date->format('h:i A') }}
+                                @endif
+                            </p>
+                        </div>
+                        <button type="button" id="clear_appointment_selection" class="px-3 py-1 rounded text-sm transition" style="background-color: #95a5a6; color: #ffffff;">
+                            <i class="fas fa-times mr-1"></i>Clear
+                        </button>
+                    </div>
+                </div>
+                
+                @error('appointment_id')
+                    <p class="mt-1 text-sm" style="color: #d32f2f;">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Diagnosis -->
+            <div class="mb-6">
+                <label for="diagnosis" class="block text-sm font-medium mb-2" style="color: #2c3e50;">
+                    <i class="fas fa-diagnoses mr-1" style="color: #f4d03f;"></i>Diagnosis *
+                </label>
+                <textarea id="diagnosis" name="diagnosis" rows="4" required 
+                          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-blue-500" 
+                          style="border-color: #d1d5db;"
+                          placeholder="Enter detailed diagnosis...">{{ old('diagnosis', $medicalRecord->diagnosis) }}</textarea>
+                @error('diagnosis')
+                    <p class="mt-1 text-sm" style="color: #d32f2f;">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Treatment -->
+            <div class="mb-6">
+                <label for="treatment" class="block text-sm font-medium mb-2" style="color: #2c3e50;">
+                    <i class="fas fa-prescription mr-1" style="color: #f4d03f;"></i>Treatment *
+                </label>
+                <textarea id="treatment" name="treatment" rows="4" required 
+                          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-blue-500" 
+                          style="border-color: #d1d5db;"
+                          placeholder="Enter treatment plan and procedures...">{{ old('treatment', $medicalRecord->treatment) }}</textarea>
+                @error('treatment')
+                    <p class="mt-1 text-sm" style="color: #d32f2f;">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- General Prescription Notes -->
+            <div class="mb-6">
+                <label for="prescription" class="block text-sm font-medium mb-2" style="color: #2c3e50;">
+                    <i class="fas fa-notes-medical mr-1" style="color: #f4d03f;"></i>General Prescription Notes
+                </label>
+                <textarea id="prescription" name="prescription" rows="3" 
+                          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-blue-500" 
+                          style="border-color: #d1d5db;"
+                          placeholder="Enter general prescription notes...">{{ old('prescription', $medicalRecord->prescription) }}</textarea>
+            </div>
+
+            <!-- Medications Section -->
+            <div class="mb-6 p-6 rounded-lg" style="background-color: #f9fafb; border: 2px solid #e5e7eb;">
+                <div class="flex justify-between items-center mb-4">
+                    <label class="text-sm font-medium" style="color: #2c3e50;">
+                        <i class="fas fa-pills mr-1" style="color: #f4d03f;"></i>Medications
+                    </label>
+                    <button type="button" id="add-medication" 
+                            class="px-4 py-2 text-white rounded-lg transition" 
+                            style="background-color: #0d5cb6;">
+                        <i class="fas fa-plus mr-2"></i>Add Medication
+                    </button>
+                </div>
+                
+                <div id="medications-container">
+                    @forelse($medicalRecord->prescriptions as $index => $prescription)
+                    <div class="medication-row mb-4 p-4 rounded-lg" style="background-color: #ffffff; border: 1px solid #d1d5db;">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-medium" style="color: #2c3e50;">Medication {{ $loop->iteration }}</span>
+                            <button type="button" onclick="this.closest('.medication-row').remove()" 
+                                    class="px-3 py-1 rounded text-sm transition" 
+                                    style="background-color: #d32f2f; color: #ffffff;">
+                                <i class="fas fa-trash mr-1"></i>Remove
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Medication Name</label>
+                                <input type="text" name="medications[{{ $index }}][name]" value="{{ old("medications.$index.name", $prescription->medication_name) }}"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., Amoxicillin">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Dosage</label>
+                                <input type="text" name="medications[{{ $index }}][dosage]" value="{{ old("medications.$index.dosage", $prescription->dosage) }}"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., 250mg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Frequency</label>
+                                <input type="text" name="medications[{{ $index }}][frequency]" value="{{ old("medications.$index.frequency", $prescription->frequency) }}"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., Twice daily">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Duration (days)</label>
+                                <input type="number" name="medications[{{ $index }}][duration_days]" value="{{ old("medications.$index.duration_days", $prescription->duration_days) }}" min="1"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="7">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Instructions</label>
+                                <input type="text" name="medications[{{ $index }}][instructions]" value="{{ old("medications.$index.instructions", $prescription->instructions) }}"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., Take with food">
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="medication-row mb-4 p-4 rounded-lg" style="background-color: #ffffff; border: 1px solid #d1d5db;">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Medication Name</label>
+                                <input type="text" name="medications[0][name]"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., Amoxicillin">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Dosage</label>
+                                <input type="text" name="medications[0][dosage]"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., 250mg">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Frequency</label>
+                                <input type="text" name="medications[0][frequency]"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., Twice daily">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Duration (days)</label>
+                                <input type="number" name="medications[0][duration_days]" min="1"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="7">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Instructions</label>
+                                <input type="text" name="medications[0][instructions]"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                                       style="border-color: #d1d5db;"
+                                       placeholder="e.g., Take with food">
+                            </div>
+                        </div>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex justify-end gap-3 pt-6 border-t" style="border-color: #e5e7eb;">
+                @if(Auth::user()->isAdmin())
+                    <a href="{{ route('admin.medical-records') }}" class="px-6 py-3 rounded-lg transition font-medium" style="background-color: #95a5a6; color: #ffffff;">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </a>
+                @elseif(Auth::user()->isDoctor())
+                    <a href="{{ route('doctor.medical-records') }}" class="px-6 py-3 rounded-lg transition font-medium" style="background-color: #95a5a6; color: #ffffff;">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </a>
+                @else
+                    <a href="{{ route('pet-owner.medical-records') }}" class="px-6 py-3 rounded-lg transition font-medium" style="background-color: #95a5a6; color: #ffffff;">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </a>
+                @endif
+                <button type="submit" class="px-6 py-3 text-white rounded-lg transition font-medium" style="background-color: #0d5cb6;">
+                    <i class="fas fa-save mr-2"></i>Update Medical Record
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
+// Appointment search data
+const appointments = @json($appointments);
+
+// Medication management
 let medicationIndex = {{ $medicalRecord->prescriptions->count() }};
 
 document.getElementById('add-medication').addEventListener('click', function() {
     const container = document.getElementById('medications-container');
     const newRow = document.createElement('div');
-    newRow.className = 'medication-row grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50';
+    newRow.className = 'medication-row mb-4 p-4 rounded-lg';
+    newRow.style.backgroundColor = '#ffffff';
+    newRow.style.border = '1px solid #d1d5db';
     newRow.innerHTML = `
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Medication Name</label>
-            <input type="text" name="medications[${medicationIndex}][name]" 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                   placeholder="e.g., Amoxicillin">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Dosage</label>
-            <input type="text" name="medications[${medicationIndex}][dosage]" 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                   placeholder="e.g., 250mg">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Frequency</label>
-            <input type="text" name="medications[${medicationIndex}][frequency]" 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                   placeholder="e.g., Twice daily">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Duration (days)</label>
-            <input type="number" name="medications[${medicationIndex}][duration_days]" min="1" 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                   placeholder="7">
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-600">Instructions</label>
-            <input type="text" name="medications[${medicationIndex}][instructions]" 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                   placeholder="e.g., With food">
-        </div>
-        <div class="flex items-end">
-            <button type="button" onclick="this.closest('.medication-row').remove()" class="inline-flex items-center px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50">
-                <i class="fas fa-trash"></i>
+        <div class="flex justify-between items-center mb-3">
+            <span class="text-sm font-medium" style="color: #2c3e50;">Medication ${medicationIndex + 1}</span>
+            <button type="button" onclick="this.closest('.medication-row').remove()" 
+                    class="px-3 py-1 rounded text-sm transition" 
+                    style="background-color: #d32f2f; color: #ffffff;">
+                <i class="fas fa-trash mr-1"></i>Remove
             </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Medication Name</label>
+                <input type="text" name="medications[${medicationIndex}][name]" 
+                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                       style="border-color: #d1d5db;"
+                       placeholder="e.g., Amoxicillin">
+            </div>
+            <div>
+                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Dosage</label>
+                <input type="text" name="medications[${medicationIndex}][dosage]" 
+                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                       style="border-color: #d1d5db;"
+                       placeholder="e.g., 250mg">
+            </div>
+            <div>
+                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Frequency</label>
+                <input type="text" name="medications[${medicationIndex}][frequency]" 
+                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                       style="border-color: #d1d5db;"
+                       placeholder="e.g., Twice daily">
+            </div>
+            <div>
+                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Duration (days)</label>
+                <input type="number" name="medications[${medicationIndex}][duration_days]" min="1" 
+                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                       style="border-color: #d1d5db;"
+                       placeholder="7">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-xs font-medium mb-1" style="color: #5d6d7e;">Instructions</label>
+                <input type="text" name="medications[${medicationIndex}][instructions]" 
+                       class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-blue-500" 
+                       style="border-color: #d1d5db;"
+                       placeholder="e.g., Take with food">
+            </div>
         </div>
     `;
     container.appendChild(newRow);
     medicationIndex++;
 });
+
+// Appointment search functionality
+const appointmentSearchInput = document.getElementById('appointment_search');
+const appointmentResultsDiv = document.getElementById('appointment_results');
+const appointmentIdInput = document.getElementById('appointment_id');
+const selectedAppointmentDisplay = document.getElementById('selected_appointment_display');
+const clearAppointmentSelectionBtn = document.getElementById('clear_appointment_selection');
+
+if (appointmentSearchInput) {
+    appointmentSearchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        if (searchTerm.length < 1) {
+            appointmentResultsDiv.classList.add('hidden');
+            return;
+        }
+        
+        // Filter appointments
+        const filteredAppointments = appointments.filter(appointment => {
+            const petName = appointment.pet.name.toLowerCase();
+            const serviceName = appointment.service.name.toLowerCase();
+            const appointmentDate = appointment.appointment_date.toLowerCase();
+            
+            return petName.includes(searchTerm) || 
+                   serviceName.includes(searchTerm) || 
+                   appointmentDate.includes(searchTerm);
+        });
+        
+        // Display results
+        if (filteredAppointments.length > 0) {
+            appointmentResultsDiv.innerHTML = filteredAppointments.map(appointment => {
+                const date = new Date(appointment.appointment_date);
+                const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const formattedTime = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                
+                return `
+                    <div class="appointment-result-item p-2 hover:bg-blue-50 cursor-pointer border-b transition" 
+                         data-appointment-id="${appointment.id}"
+                         data-appointment-pet="${appointment.pet.name}"
+                         data-appointment-service="${appointment.service.name}"
+                         data-appointment-date="${formattedDate}"
+                         data-appointment-time="${formattedTime}"
+                         style="border-color: #e5e7eb;">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-semibold" style="color: #2c3e50;">
+                                    <i class="fas fa-calendar-check mr-2 text-xs" style="color: #3498db;"></i>${appointment.pet.name} - ${appointment.service.name}
+                                </p>
+                                <p class="text-xs" style="color: #5d6d7e;">
+                                    ${formattedDate} at ${formattedTime}
+                                </p>
+                            </div>
+                            <i class="fas fa-chevron-right text-xs" style="color: #95a5a6;"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            appointmentResultsDiv.classList.remove('hidden');
+            
+            // Add click handlers
+            document.querySelectorAll('.appointment-result-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    selectAppointment(
+                        this.dataset.appointmentId,
+                        this.dataset.appointmentPet,
+                        this.dataset.appointmentService,
+                        this.dataset.appointmentDate,
+                        this.dataset.appointmentTime
+                    );
+                });
+            });
+        } else {
+            appointmentResultsDiv.innerHTML = `
+                <div class="p-4 text-center" style="color: #5d6d7e;">
+                    <i class="fas fa-search text-2xl mb-2" style="color: #d1d5db;"></i>
+                    <p class="text-sm">No appointments found</p>
+                </div>
+            `;
+            appointmentResultsDiv.classList.remove('hidden');
+        }
+    });
+    
+    // Close results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!appointmentSearchInput.contains(e.target) && !appointmentResultsDiv.contains(e.target)) {
+            appointmentResultsDiv.classList.add('hidden');
+        }
+    });
+}
+
+function selectAppointment(id, petName, serviceName, date, time) {
+    appointmentIdInput.value = id;
+    appointmentSearchInput.value = '';
+    appointmentResultsDiv.classList.add('hidden');
+    
+    document.getElementById('selected_appointment_name').textContent = `${petName} - ${serviceName}`;
+    document.getElementById('selected_appointment_details').textContent = `${date} at ${time}`;
+    
+    selectedAppointmentDisplay.classList.remove('hidden');
+}
+
+if (clearAppointmentSelectionBtn) {
+    clearAppointmentSelectionBtn.addEventListener('click', function() {
+        appointmentIdInput.value = '';
+        selectedAppointmentDisplay.classList.add('hidden');
+        appointmentSearchInput.focus();
+    });
+}
 </script>
+
+<style>
+button:hover, a:hover {
+    opacity: 0.9;
+}
+
+.appointment-result-item:last-child {
+    border-bottom: none;
+}
+</style>
 @endsection

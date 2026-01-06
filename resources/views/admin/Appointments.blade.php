@@ -9,12 +9,10 @@
         <div>
             <h1 class="text-2xl font-bold text-[#1e3a5f]">Appointments</h1>
         </div>
-        @if(Auth::user()->isAdmin() || Auth::user()->isPetOwner())
         <a href="{{ route('appointments.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#0d47a1] hover:bg-[#1565c0] transition">
             <i class="fas fa-plus mr-2"></i>
             Schedule Appointment
         </a>
-        @endif
     </div>
 
     @if(session('success'))
@@ -47,6 +45,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Pet</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Owner</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Service</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Source</th>
                         <th class="px-6 py-3 text-center text-xs font-medium text-gray-200 uppercase">Action</th>
                     </tr>
                 </thead>
@@ -60,6 +59,17 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $appt->pet->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $appt->pet->owner->user->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $appt->service->name ?? 'N/A' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            @if($appt->source === 'walk-in')
+                                <span class="px-3 py-1.5 text-xs font-bold rounded-lg inline-block bg-purple-100 text-purple-800 border-2 border-purple-400">
+                                    <i class="fas fa-walking mr-1"></i>Walk-in
+                                </span>
+                            @else
+                                <span class="px-3 py-1.5 text-xs font-bold rounded-lg inline-block bg-blue-100 text-blue-800 border-2 border-blue-400">
+                                    <i class="fas fa-laptop mr-1"></i>Online
+                                </span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex justify-center gap-4">
                                 <button onclick="viewAppointment({{ $appt->id }})" class="text-[#0d47a1] hover:text-[#1565c0] transition" title="View Details">
@@ -108,6 +118,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Pet</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Owner</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Service</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Source</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase">Requested</th>
                         <th class="px-6 py-3 text-center text-xs font-medium text-gray-200 uppercase">Action</th>
                     </tr>
@@ -122,6 +133,17 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $appt->pet->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $appt->pet->owner->user->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $appt->service->name ?? 'N/A' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            @if($appt->source === 'walk-in')
+                                <span class="px-3 py-1.5 text-xs font-bold rounded-lg inline-block bg-purple-100 text-purple-800 border-2 border-purple-400">
+                                    <i class="fas fa-walking mr-1"></i>Walk-in
+                                </span>
+                            @else
+                                <span class="px-3 py-1.5 text-xs font-bold rounded-lg inline-block bg-blue-100 text-blue-800 border-2 border-blue-400">
+                                    <i class="fas fa-laptop mr-1"></i>Online
+                                </span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
                             {{ $appt->cancellation_requested_at ? $appt->cancellation_requested_at->diffForHumans() : 'N/A' }}
                         </td>
@@ -201,6 +223,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Doctor</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Service</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Date & Time</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Source</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -235,6 +258,17 @@
                             <div class="text-xs text-gray-500">{{ $appointment->appointment_time }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            @if($appointment->source === 'walk-in')
+                                <span class="px-3 py-1.5 text-xs font-bold rounded-lg inline-block bg-purple-100 text-purple-800 border-2 border-purple-400">
+                                    <i class="fas fa-walking mr-1"></i>Walk-in
+                                </span>
+                            @else
+                                <span class="px-3 py-1.5 text-xs font-bold rounded-lg inline-block bg-blue-100 text-blue-800 border-2 border-blue-400">
+                                    <i class="fas fa-laptop mr-1"></i>Online
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
                             @if($appointment->cancellation_status === 'pending')
                                 <span class="px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap inline-block bg-purple-100 text-purple-800 border-2 border-purple-300">
                                     <i class="fas fa-hourglass-half mr-1"></i>Cancellation Requested
@@ -263,13 +297,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center gap-4">
-                                <!-- View - Always show -->
                                 <a href="{{ route('appointments.show', $appointment->id) }}" class="text-[#0d47a1] hover:text-[#1565c0] transition inline-block" title="View">
                                     <i class="fas fa-eye text-lg"></i>
                                 </a>
                                 
                                 @if($appointment->cancellation_status !== 'pending')
-                                    <!-- Edit -->
                                     @if($appointment->status === 'scheduled')
                                         <a href="{{ route('appointments.edit', $appointment->id) }}" class="text-[#d4911e] hover:text-[#b8860b] transition inline-block" title="Edit">
                                             <i class="fas fa-edit text-lg"></i>
@@ -289,7 +321,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-8 text-sm text-gray-500 text-center">
+                        <td colspan="8" class="px-6 py-8 text-sm text-gray-500 text-center">
                             No appointments found.
                         </td>
                     </tr>
@@ -298,7 +330,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         @if($appointments->hasPages())
         <div class="px-6 py-4 border-t border-gray-200">
             {{ $appointments->appends(request()->query())->links() }}
@@ -352,7 +383,6 @@
 </div>
 
 <script>
-    // Toggle section visibility
     function toggleSection(sectionId) {
         const section = document.getElementById(sectionId);
         const icon = document.getElementById(sectionId.replace('Section', 'Icon'));
@@ -368,7 +398,6 @@
         }
     }
 
-    // Restore toggle states on page load
     document.addEventListener('DOMContentLoaded', function() {
         if (localStorage.getItem('pendingSection_expanded') === 'true') {
             const pendingSection = document.getElementById('pendingSection');
@@ -389,32 +418,26 @@
         }
     });
 
-    // Auto-submit form when status dropdown changes
     document.getElementById('statusFilter').addEventListener('change', function() {
         document.getElementById('filterForm').submit();
     });
 
-    // View appointment
     function viewAppointment(id) {
         window.location.href = '/appointments/' + id;
     }
 
-    // Show completed appointment dialog
     function showCompletedDialog() {
         document.getElementById('completedDialog').classList.remove('hidden');
     }
 
-    // Show cancelled appointment dialog
     function showCancelledDialog() {
         document.getElementById('cancelledDialog').classList.remove('hidden');
     }
 
-    // Close dialog
     function closeDialog(dialogId) {
         document.getElementById(dialogId).classList.add('hidden');
     }
 
-    // Close dialog when clicking outside
     ['completedDialog', 'cancelledDialog'].forEach(dialogId => {
         document.getElementById(dialogId)?.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -423,7 +446,6 @@
         });
     });
 
-    // Close dialog with ESC key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeDialog('completedDialog');
