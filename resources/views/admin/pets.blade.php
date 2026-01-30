@@ -143,13 +143,6 @@
                                     <a href="{{ route('pets.edit', $pet->id) }}" class="text-[#d4911e] hover:text-[#b8860b] transition" title="Edit">
                                         <i class="fas fa-edit text-lg"></i>
                                     </a>
-                                    <form action="{{ route('admin.pets.destroy', $pet->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this pet?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800 transition" title="Delete">
-                                            <i class="fas fa-trash text-lg"></i>
-                                        </button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>

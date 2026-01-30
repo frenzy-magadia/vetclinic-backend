@@ -90,7 +90,7 @@
         </div>
     </div>
 
-    <!-- Monthly Appointments Trend - Full Width -->
+    <!-- Monthly Appointments  -->
     <div class="bg-white shadow-lg rounded-lg border-t-4 border-[#1e3a5f] overflow-hidden">
         <div class="px-6 py-5">
             <h3 class="text-lg leading-6 font-medium text-[#1e3a5f] mb-4">Monthly Appointments Trend</h3>
@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <!-- Appointments by Status Table - Full Width -->
+    <!-- Appointments by Status Table -->
     <div class="bg-white shadow-lg rounded-lg border-t-4 border-[#1e3a5f] overflow-hidden">
         <div class="px-6 py-5">
             <h3 class="text-lg leading-6 font-medium text-[#1e3a5f] mb-4">Appointments by Status</h3>

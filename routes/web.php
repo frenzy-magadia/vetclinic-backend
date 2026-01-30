@@ -80,6 +80,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/inventory/filter/{type}', [AdminController::class, 'inventoryFilter'])->name('inventory.filter');
         Route::get('/inventory/{inventory}', [InventoryController::class, 'show'])->name('inventory.show');
         Route::post('/inventory/{inventory}/add-batch', [InventoryController::class, 'addBatch'])->name('inventory.add-batch');
+        Route::post('/inventory/{inventory}/adjust-stock', [AdminController::class, 'adjustStock'])->name('inventory.adjust-stock');
+        Route::post('/inventory/{inventory}/mass-adjust-stock', [AdminController::class, 'massAdjustStock'])->name('inventory.mass-adjust-stock');
+        Route::post('/inventory/store', [AdminController::class, 'storeInventory'])->name('inventory.store');
+        Route::put('/inventory/{inventory}', [AdminController::class, 'updateInventory'])->name('inventory.update');
+        Route::delete('/inventory/{inventory}', [AdminController::class, 'destroyInventory'])->name('inventory.destroy');
         Route::put('/inventory/batches/{batch}', [InventoryController::class, 'updateBatch'])->name('inventory.batches.update');
         Route::delete('/inventory/batches/{batch}', [InventoryController::class, 'deleteBatch'])->name('inventory.batches.delete');
        
@@ -99,7 +104,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/appointments/{appointment}/reject', [DoctorController::class, 'rejectAppointment'])->name('appointments.reject');
 
         Route::get('/inventory-item/{inventoryItem}', [DoctorController::class, 'getInventoryItem'])->name('inventory-item');
-        
+        Route::get('/inventory-items-list', [DoctorController::class, 'getInventoryItemsList'])->name('inventory-items-list');
         // Doctor cancellation approval routes
         Route::post('/appointments/{appointment}/approve-cancellation', [AppointmentController::class, 'approveCancellation'])->name('appointments.approve-cancellation');
         Route::post('/appointments/{appointment}/decline-cancellation', [AppointmentController::class, 'declineCancellation'])->name('appointments.decline-cancellation');
@@ -245,7 +250,6 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('services', ServiceController::class);
     Route::resource('inventory', InventoryController::class);
-    Route::post('/inventory/{inventory}/adjust-stock', [InventoryController::class, 'adjustStock'])->name('inventory.adjust-stock');
     
     // General cancellation routes 
     Route::post('/appointments/{appointment}/approve-cancellation', [AppointmentController::class, 'approveCancellation'])->name('appointments.approve-cancellation');

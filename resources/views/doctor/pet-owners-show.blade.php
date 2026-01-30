@@ -97,11 +97,11 @@
                                     style="background-color: #0d5cb6;">
                                 <i class="fas fa-eye mr-1"></i>View
                             </button>
-                            <button onclick="openEditModal({{ $pet->id }})" 
+                            <!-- <button onclick="openEditModal({{ $pet->id }})" 
                                     class="flex-1 px-3 py-2 text-white rounded-lg text-sm transition" 
                                     style="background-color: #28a745;">
                                 <i class="fas fa-edit mr-1"></i>Edit
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                     @endforeach

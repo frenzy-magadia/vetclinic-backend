@@ -90,7 +90,7 @@
                                 </select>
                             </div>
 
-                            <!-- Item Selection (Dynamic) - For Inventory -->
+                            <!-- Item Selection  - For Inventory -->
                             <div id="itemSelectionContainer" class="hidden">
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Select Item...</label>
                                 
@@ -100,7 +100,7 @@
                                         type="text" 
                                         id="inventory_search" 
                                         placeholder="Search inventory item..."
-                                        class="w-full px-2 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                        class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                                         autocomplete="off"
                                     >
                                     <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
@@ -123,13 +123,13 @@
                                 </div>
                             </div>
 
-                            <!-- Service Description (Only for Service) -->
+                            <!-- Service Description -->
                             <div id="serviceDescriptionContainer" class="hidden">
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Description</label>
                                 <input type="text" id="serviceDescription" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" placeholder="e.g., Consultation, Surgery...">
                             </div>
 
-                            <!-- Unit Price for Service (beside Description) -->
+                            <!-- Unit Price for Service  -->
                             <div id="servicePriceContainer" class="hidden">
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Unit Price (₱)</label>
                                 <input type="number" id="servicePriceInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" step="0.01" min="0" placeholder="0.00">
@@ -145,7 +145,7 @@
                                 <p class="text-xs text-gray-500 mt-1">Available: <span id="availableStock">-</span></p>
                             </div>
 
-                            <!-- Unit Price for Inventory (below selection) -->
+                            <!-- Unit Price for Inventory  -->
                             <div id="inventoryPriceContainer" class="hidden">
                                 <label class="block text-xs font-semibold text-gray-600 mb-1">Unit Price (₱)</label>
                                 <input type="number" id="inventoryPriceInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" step="0.01" min="0" readonly>
@@ -154,7 +154,7 @@
 
                         <!-- Add Button -->
                         <button type="button" onclick="addItemToList()" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
-                            <i class="fas fa-plus mr-2"></i>+ Add
+                            <i class="fas fa-plus mr-2"></i> Add
                         </button>
                     </div>
                 </div>
@@ -240,7 +240,10 @@ function displayPetResults(results) {
         <div class="px-4 py-2.5 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors" 
              onclick='selectPet(${JSON.stringify(pet)})'>
             <p class="font-medium text-gray-900 text-sm">${pet.name}</p>
-            <p class="text-xs text-gray-500 mt-0.5">Owner: ${pet.owner.user.name}</p>
+            <p class="text-xs text-gray-500 mt-0.5">
+                Owner: ${pet.owner.user.name}
+                <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-semibold">Approved</span>
+            </p>
         </div>
     `).join('');
     
@@ -344,7 +347,7 @@ function selectInventoryItem(item) {
     inventorySearchInput.value = '';
     inventoryResultsDiv.classList.add('hidden');
     
-    // Hide search, show selected badge
+    
     document.getElementById('inventory_search_container').classList.add('hidden');
     selectedInventoryDiv.classList.remove('hidden');
 }
@@ -356,7 +359,7 @@ function clearInventorySelection() {
     document.getElementById('availableStock').textContent = '-';
     inventorySearchInput.value = '';
     
-    // Show search, hide selected badge
+    
     selectedInventoryDiv.classList.add('hidden');
     document.getElementById('inventory_search_container').classList.remove('hidden');
     inventorySearchInput.focus();
@@ -389,7 +392,7 @@ document.getElementById('newItemType').addEventListener('change', function() {
     }
     
     if (itemType === 'service') {
-        // For services, show description and price fields side by side
+       
         itemSelectionContainer.classList.add('hidden');
         serviceDescriptionContainer.classList.remove('hidden');
         servicePriceContainer.classList.remove('hidden');
@@ -399,7 +402,7 @@ document.getElementById('newItemType').addEventListener('change', function() {
         document.getElementById('servicePriceInput').value = '';
         document.getElementById('serviceDescription').focus();
     } else if (itemType === 'inventory') {
-        // For inventory items - show search interface
+      
         serviceDescriptionContainer.classList.add('hidden');
         servicePriceContainer.classList.add('hidden');
         itemSelectionContainer.classList.remove('hidden');
@@ -411,7 +414,6 @@ document.getElementById('newItemType').addEventListener('change', function() {
     }
 });
 
-// Item selection handler - removed, now using search
 
 // Quantity input handler
 document.getElementById('newQuantity').addEventListener('input', function() {

@@ -10,7 +10,7 @@
         <p class="text-gray-200">Welcome to the Veterinary Clinic Management System</p>
     </div>
 
-    <!-- Statistics Cards - Now 5 cards in better proportion -->
+    <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <a href="{{ route('admin.pets') }}" class="bg-[#0d47a1] overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition cursor-pointer">
             <div class="p-4">

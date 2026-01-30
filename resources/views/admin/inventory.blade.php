@@ -43,9 +43,15 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Search and Filter Section -->
     <div class="flex items-center justify-between gap-4 mb-6">
-        <form method="GET" action="{{ route('inventory.index') }}" id="filterForm">
+        <form method="GET" action="{{ route('admin.inventory') }}" id="filterForm">
             <div class="relative inline-block">
                 <select name="category" id="categoryFilter" class="px-4 py-2 bg-[#ffd700] text-gray-900 font-bold rounded-lg cursor-pointer hover:bg-[#ffc107] transition text-sm">
                     <option value="">All Categories</option>
@@ -56,14 +62,14 @@
             </div>
         </form>
 
-        <form method="GET" action="{{ route('inventory.index') }}" class="flex items-center gap-2">
+        <form method="GET" action="{{ route('admin.inventory') }}" class="flex items-center gap-2">
             <input type="hidden" name="category" value="{{ $category }}">
             <input type="text" name="search" class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d47a1] w-48" placeholder="Search..." value="{{ request('search') }}">
             <button type="submit" class="px-2.5 py-1.5 bg-[#2c3e50] text-white text-sm rounded-lg hover:bg-[#34495e] transition">
                 <i class="fas fa-search text-sm"></i>
             </button>
             @if(request('search') || request('category'))
-            <a href="{{ route('inventory.index') }}" class="px-2.5 py-1.5 bg-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-400 transition">
+            <a href="{{ route('admin.inventory') }}" class="px-2.5 py-1.5 bg-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-400 transition">
                 <i class="fas fa-times text-sm"></i>
             </a>
             @endif
@@ -104,14 +110,14 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center gap-3">
-                                <form action="{{ route('inventory.adjust-stock', $item->id) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.inventory.adjust-stock', $item->id) }}" method="POST" class="inline">
                                     @csrf
                                     <input type="hidden" name="adjustment_type" value="reduce">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit" class="w-8 h-8 bg-red-500 text-white rounded-lg hover:bg-red-600 font-bold text-lg flex items-center justify-center transition">-</button>
                                 </form>
                                 <span class="font-bold text-lg min-w-[3rem] text-center text-[#1e3a5f]">{{ $item->total_stock }}</span>
-                                <form action="{{ route('inventory.adjust-stock', $item->id) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.inventory.adjust-stock', $item->id) }}" method="POST" class="inline">
                                     @csrf
                                     <input type="hidden" name="adjustment_type" value="add">
                                     <input type="hidden" name="quantity" value="1">
@@ -121,14 +127,17 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
                             <div class="flex items-center justify-center gap-2">
-                                <button onclick="openAddBatchModal({{ $item->id }})" class="px-3 py-1.5 bg-orange-600 text-white text-sm rounded hover:bg-purple-700 transition">
+                                <button onclick="openMassAdjustModal({{ $item->id }}, '{{ $item->name }}', {{ $item->total_stock }}, '{{ $item->unit }}')" class="px-3 py-1.5 bg-purple-600 text-white text-sm rounded hover:bg-purple-700 transition" title="Mass Adjustment">
+                                    <i class="fas fa-sliders-h mr-1"></i>Mass Adjust
+                                </button>
+                                <button onclick="openAddBatchModal({{ $item->id }})" class="px-3 py-1.5 bg-orange-600 text-white text-sm rounded hover:bg-orange-700 transition">
                                     <i class="fas fa-plus mr-1"></i>Add Batch
                                 </button>
                                 <div class="flex items-center gap-1">
                                     <button onclick="openEditModal({{ $item->id }})" class="w-8 h-8 bg-[#0d47a1] text-white rounded hover:bg-[#1565c0] transition flex items-center justify-center" title="Edit">
                                         <i class="fas fa-edit text-sm"></i>
                                     </button>
-                                    <form action="{{ route('inventory.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');" class="inline">
+                                    <form action="{{ route('admin.inventory.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="w-8 h-8 bg-red-600 text-white rounded hover:bg-red-700 transition flex items-center justify-center" title="Delete">
@@ -280,6 +289,74 @@
     </div>
 </div>
 
+<!-- Mass Adjust Stock Modal -->
+<div id="massAdjustModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(30, 58, 95, 0.5);">
+    <div style="background-color: white; margin: 10% auto; padding: 32px; border: 1px solid #888; border-radius: 8px; width: 90%; max-width: 600px; position: relative; border-top: 4px solid #9333ea;">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-purple-700">Mass Stock Adjustment</h3>
+            <button onclick="closeModal('massAdjustModal')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+        </div>
+        
+        <form id="massAdjustForm" method="POST">
+            @csrf
+            
+            <div class="mb-4 bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <p class="text-sm text-gray-700 mb-2">
+                    <span class="font-semibold">Item:</span> <span id="massAdjustItemName" class="text-purple-700"></span>
+                </p>
+                <p class="text-sm text-gray-700">
+                    <span class="font-semibold">Current Stock:</span> <span id="massAdjustCurrentStock" class="text-purple-700 font-bold"></span> <span id="massAdjustUnit"></span>
+                </p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-[#1e3a5f] mb-2">Adjustment Type</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="flex items-center p-3 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition">
+                        <input type="radio" name="adjustment_type" value="add" class="mr-3" checked onchange="updateAdjustmentType()">
+                        <div>
+                            <div class="font-semibold text-green-600">Add Stock</div>
+                            <div class="text-xs text-gray-500">Increase quantity</div>
+                        </div>
+                    </label>
+                    <label class="flex items-center p-3 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-red-500 transition">
+                        <input type="radio" name="adjustment_type" value="reduce" class="mr-3" onchange="updateAdjustmentType()">
+                        <div>
+                            <div class="font-semibold text-red-600">Reduce Stock</div>
+                            <div class="text-xs text-gray-500">Decrease quantity</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Quantity</label>
+                <input type="number" name="quantity" id="massAdjustQuantity" required min="1" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="Enter quantity">
+                <p class="text-xs text-gray-500 mt-1">Specify the amount to add or reduce</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-[#1e3a5f] mb-1">Notes (Optional)</label>
+                <textarea name="notes" id="massAdjustNotes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-600" placeholder="Add notes about this adjustment..."></textarea>
+            </div>
+
+            <div id="previewSection" class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200" style="display: none;">
+                <p class="text-sm font-semibold text-gray-700 mb-2">Preview:</p>
+                <p class="text-sm text-gray-600">
+                    <span id="previewText"></span>
+                </p>
+            </div>
+
+            <div class="flex justify-end gap-2 mt-6">
+                <button type="button" onclick="closeModal('massAdjustModal')" class="px-6 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition">Cancel</button>
+                <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
+                    <i class="fas fa-check mr-2"></i>Confirm Adjustment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Batches Modal -->
 <div id="batchesModal" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(30, 58, 95, 0.5);">
     <div style="background-color: white; margin: 5% auto; padding: 32px; border: 1px solid #888; border-radius: 8px; width: 90%; max-width: 900px; position: relative; border-top: 4px solid #1e3a5f;">
@@ -297,13 +374,16 @@
 </div>
 
 <script>
+let currentItemStock = 0;
+let currentItemUnit = '';
+
 document.getElementById('categoryFilter').addEventListener('change', function() {
     document.getElementById('filterForm').submit();
 });
 
 function openAddModal() {
     document.getElementById('modalTitle').textContent = 'Add New Item';
-    document.getElementById('itemForm').action = "{{ route('inventory.store') }}";
+    document.getElementById('itemForm').action = "{{ route('admin.inventory.store') }}";
     document.getElementById('formMethod').value = 'POST';
     document.getElementById('batchSection').style.display = 'block';
     document.getElementById('itemForm').reset();
@@ -312,11 +392,15 @@ function openAddModal() {
 
 function openEditModal(id) {
     document.getElementById('modalTitle').textContent = 'Edit Item';
-    document.getElementById('itemForm').action = "/inventory/" + id;
+    document.getElementById('itemForm').action = "{{ url('admin/inventory') }}/" + id;
     document.getElementById('formMethod').value = 'PUT';
     document.getElementById('batchSection').style.display = 'none';
     
-    fetch('/inventory/' + id)
+    // Remove batch field requirements for edit
+    document.getElementById('batchNumber').removeAttribute('required');
+    document.getElementById('batchQuantity').removeAttribute('required');
+    
+    fetch('/admin/inventory/' + id)
         .then(response => response.json())
         .then(data => {
             document.getElementById('itemName').value = data.name;
@@ -332,16 +416,71 @@ function openEditModal(id) {
 }
 
 function openAddBatchModal(id) {
-    document.getElementById('addBatchForm').action = "/inventory/" + id + "/add-batch";
+    document.getElementById('addBatchForm').action = "/admin/inventory/" + id + "/add-batch";
     document.getElementById('addBatchForm').reset();
     document.getElementById('addBatchModal').style.display = 'block';
+}
+
+function openMassAdjustModal(id, name, stock, unit) {
+    currentItemStock = stock;
+    currentItemUnit = unit;
+    
+    document.getElementById('massAdjustForm').action = "/admin/inventory/" + id + "/mass-adjust-stock";
+    document.getElementById('massAdjustItemName').textContent = name;
+    document.getElementById('massAdjustCurrentStock').textContent = stock;
+    document.getElementById('massAdjustUnit').textContent = unit;
+    document.getElementById('massAdjustForm').reset();
+    document.getElementById('previewSection').style.display = 'none';
+    
+    // Reset to "Add" option
+    document.querySelector('input[name="adjustment_type"][value="add"]').checked = true;
+    
+    document.getElementById('massAdjustModal').style.display = 'block';
+}
+
+function updateAdjustmentType() {
+    updatePreview();
+}
+
+// Update preview when quantity changes
+document.getElementById('massAdjustQuantity')?.addEventListener('input', function() {
+    updatePreview();
+});
+
+function updatePreview() {
+    const quantity = parseInt(document.getElementById('massAdjustQuantity').value) || 0;
+    const adjustmentType = document.querySelector('input[name="adjustment_type"]:checked').value;
+    const previewSection = document.getElementById('previewSection');
+    const previewText = document.getElementById('previewText');
+    
+    if (quantity > 0) {
+        let newStock;
+        let message;
+        
+        if (adjustmentType === 'add') {
+            newStock = currentItemStock + quantity;
+            message = `Adding ${quantity} ${currentItemUnit}: ${currentItemStock} → <span class="font-bold text-green-600">${newStock}</span> ${currentItemUnit}`;
+        } else {
+            newStock = currentItemStock - quantity;
+            if (newStock < 0) {
+                message = `<span class="text-red-600 font-bold">Error: Cannot reduce ${quantity} ${currentItemUnit}. Only ${currentItemStock} ${currentItemUnit} available.</span>`;
+            } else {
+                message = `Reducing ${quantity} ${currentItemUnit}: ${currentItemStock} → <span class="font-bold text-orange-600">${newStock}</span> ${currentItemUnit}`;
+            }
+        }
+        
+        previewText.innerHTML = message;
+        previewSection.style.display = 'block';
+    } else {
+        previewSection.style.display = 'none';
+    }
 }
 
 function openBatchesModal(id) {
     document.getElementById('batchesModal').style.display = 'block';
     document.getElementById('batchesContent').innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-gray-400"></i></div>';
     
-    fetch('/inventory/' + id)
+    fetch('/admin/inventory/' + id)
         .then(response => response.json())
         .then(data => {
             let html = '<div class="overflow-x-auto"><table class="min-w-full border border-gray-200">';
@@ -413,6 +552,24 @@ document.querySelectorAll('[id$="Modal"]').forEach(modal => {
     background-repeat: no-repeat;
     background-position: right 8px center;
     background-size: 20px;
+}
+
+/* Radio button styling for adjustment type */
+input[type="radio"]:checked + div {
+    font-weight: bold;
+}
+
+input[type="radio"]:checked[value="add"] ~ div {
+    color: #16a34a;
+}
+
+input[type="radio"]:checked[value="reduce"] ~ div {
+    color: #dc2626;
+}
+
+label:has(input[type="radio"]:checked) {
+    border-color: #9333ea !important;
+    background-color: #faf5ff;
 }
 </style>
 @endsection

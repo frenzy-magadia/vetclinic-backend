@@ -94,9 +94,95 @@
                     <input type="text" name="price_range" placeholder="e.g., ₱500 - ₱1,000" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Icon (FontAwesome class) *</label>
-                    <input type="text" name="icon" value="fas fa-paw" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
-                    <p class="text-xs text-gray-500 mt-1">Example: fas fa-stethoscope, fas fa-syringe, fas fa-cut</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Choose Icon *</label>
+                    <input type="hidden" name="icon" id="add_icon_input" value="fas fa-paw" required>
+                    
+                    <!-- Selected Icon Preview -->
+                    <div class="mb-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-300 flex items-center gap-3">
+                        <div class="w-16 h-16 rounded-full bg-[#0066cc] flex items-center justify-center">
+                            <i id="add_selected_icon" class="fas fa-paw text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Selected Icon</p>
+                            <p class="text-xs text-gray-500">Click an icon below to change</p>
+                        </div>
+                    </div>
+
+                    <!-- Icon Grid -->
+                    <div class="grid grid-cols-6 gap-2 max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-3">
+                        <button type="button" onclick="selectIcon('add', 'fas fa-paw')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-paw text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-stethoscope')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-stethoscope text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-syringe')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-syringe text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-heartbeat')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-heartbeat text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-pills')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-pills text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-tooth')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-tooth text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-cut')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-cut text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-x-ray')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-x-ray text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-microscope')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-microscope text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-capsules')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-capsules text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-prescription-bottle')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-prescription-bottle text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-user-md')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-user-md text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-notes-medical')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-notes-medical text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-first-aid')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-first-aid text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-briefcase-medical')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-briefcase-medical text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-medkit')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-medkit text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-bone')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-bone text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-dog')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-dog text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-cat')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-cat text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-bath')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-bath text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-spa')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-spa text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-calendar-check')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-calendar-check text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-clipboard-list')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-clipboard-list text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('add', 'fas fa-hospital')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-hospital text-2xl text-gray-700"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="flex justify-end gap-3 mt-6">
@@ -128,8 +214,95 @@
                     <input type="text" name="price_range" id="edit_price_range" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Icon (FontAwesome class) *</label>
-                    <input type="text" name="icon" id="edit_icon" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Choose Icon *</label>
+                    <input type="hidden" name="icon" id="edit_icon_input" required>
+                    
+                    <!-- Selected Icon Preview -->
+                    <div class="mb-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-300 flex items-center gap-3">
+                        <div class="w-16 h-16 rounded-full bg-[#0066cc] flex items-center justify-center">
+                            <i id="edit_selected_icon" class="text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Selected Icon</p>
+                            <p class="text-xs text-gray-500">Click an icon below to change</p>
+                        </div>
+                    </div>
+
+                    <!-- Icon Grid -->
+                    <div class="grid grid-cols-6 gap-2 max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-3">
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-paw')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-paw text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-stethoscope')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-stethoscope text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-syringe')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-syringe text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-heartbeat')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-heartbeat text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-pills')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-pills text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-tooth')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-tooth text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-cut')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-cut text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-x-ray')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-x-ray text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-microscope')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-microscope text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-capsules')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-capsules text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-prescription-bottle')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-prescription-bottle text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-user-md')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-user-md text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-notes-medical')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-notes-medical text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-first-aid')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-first-aid text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-briefcase-medical')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-briefcase-medical text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-medkit')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-medkit text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-bone')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-bone text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-dog')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-dog text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-cat')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-cat text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-bath')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-bath text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-spa')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-spa text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-calendar-check')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-calendar-check text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-clipboard-list')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-clipboard-list text-2xl text-gray-700"></i>
+                        </button>
+                        <button type="button" onclick="selectIcon('edit', 'fas fa-hospital')" class="icon-option p-3 rounded hover:bg-blue-100 border-2 border-transparent hover:border-[#0066cc] transition">
+                            <i class="fas fa-hospital text-2xl text-gray-700"></i>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label class="flex items-center">
@@ -172,6 +345,14 @@ const sortable = new Sortable(el, {
     }
 });
 
+function selectIcon(modal, iconClass) {
+    const inputId = modal === 'add' ? 'add_icon_input' : 'edit_icon_input';
+    const previewId = modal === 'add' ? 'add_selected_icon' : 'edit_selected_icon';
+    
+    document.getElementById(inputId).value = iconClass;
+    document.getElementById(previewId).className = iconClass + ' text-white text-2xl';
+}
+
 function openAddModal() {
     document.getElementById('addModal').classList.remove('hidden');
 }
@@ -184,7 +365,8 @@ function openEditModal(service) {
     document.getElementById('edit_name').value = service.name;
     document.getElementById('edit_description').value = service.description || '';
     document.getElementById('edit_price_range').value = service.price_range;
-    document.getElementById('edit_icon').value = service.icon;
+    document.getElementById('edit_icon_input').value = service.icon;
+    document.getElementById('edit_selected_icon').className = service.icon + ' text-white text-2xl';
     document.getElementById('edit_is_active').checked = service.is_active;
     document.getElementById('editForm').action = `/clinic-services/${service.id}`;
     document.getElementById('editModal').classList.remove('hidden');

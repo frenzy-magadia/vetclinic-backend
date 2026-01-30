@@ -330,24 +330,6 @@
     </div>
 </div>
 
-@php
-    // Ensure $pendingAppointments exists to avoid undefined variable errors.
-    if (!isset($pendingAppointments)) {
-        if (isset($appointments)) {
-            // If $appointments is a Laravel collection (paginated or not), filter pending ones
-            try {
-                $pendingAppointments = $appointments instanceof \Illuminate\Pagination\LengthAwarePaginator
-                    ? collect($appointments->items())->where('status', 'pending')
-                    : collect($appointments)->where('status', 'pending');
-            } catch (\Throwable $e) {
-                $pendingAppointments = collect();
-            }
-        } else {
-            $pendingAppointments = collect();
-        }
-    }
-@endphp
-
 <script>
     // Toggle section visibility
     function toggleSection(sectionId) {
